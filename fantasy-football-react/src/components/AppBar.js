@@ -4,9 +4,33 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import clsx from 'clsx';
+import MenuIcon from '@material-ui/icons/Menu';
+import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
 
 import { Client } from 'espn-fantasy-football-api';
 import { leagueId, seasonId } from '../constants/DynastyLeague';
+
+const drawerWidth = 200;
+
+const useStyles = makeStyles((theme) => ({
+  appBar: {
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarShift: {
+    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: drawerWidth,
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+}));
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -28,7 +52,8 @@ function TabPanel(props) {
   );
 } 
 
-const AppBarReact = () => {
+const AppBarReact = ({toggleDrawer, isDrawerOpen}) => {
+  const classes = useStyles();
   const [value, setValue] = useState(0);
   const [tabs, setTabs] = useState([])
   
@@ -41,7 +66,6 @@ const AppBarReact = () => {
     const client = new Client({leagueId})
     const teamArr = []
     const teams = await client.getTeamsAtWeek({seasonId, scoringPeriodId: 1})
-    console.log(teams)
     teams.forEach((team) => {
       teamArr.push(team)
     })
@@ -50,7 +74,13 @@ const AppBarReact = () => {
   
   return (
     <div>
-      <AppBar position="static">
+      <AppBar 
+        position="fixed"
+        className={clsx(classes.appBar, {
+          [classes.appBarShift]: isDrawerOpen,
+        })}
+      >
+        <Button onClick={toggleDrawer(true)} ><MenuIcon /> </Button>
         <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
           {
             tabs.map((team) => {
