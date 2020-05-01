@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 
 import { Client } from 'espn-fantasy-football-api';
-import { leagueId, seasonId } from '../constants/DynastyLeague';
 import TeamCard from './TeamCard';
+import { connect } from 'react-redux';
 
-const DepthRankings = () => {
+const DepthRankings = ({leagueId, leagueYear}) => {
   const [teams, setTeams] = useState([])
 
   useEffect(async () => {
     const client = new Client({leagueId})
     const teamArr = []
-    const teams = await client.getTeamsAtWeek({seasonId, scoringPeriodId: 1})
+    const teams = await client.getTeamsAtWeek({seasonId: leagueYear, scoringPeriodId: 1})
     teams.forEach((team) => {
       teamArr.push(team)
     })
@@ -27,5 +27,11 @@ const DepthRankings = () => {
   )
 }
 
+const mapStateToProps = (state) => {
+  return {
+    leagueYear: state.leagueData.leagueYear,
+    leagueId: state.leagueData.leagueId
+  }
+}
 
-export default DepthRankings
+export default connect(mapStateToProps)(DepthRankings);

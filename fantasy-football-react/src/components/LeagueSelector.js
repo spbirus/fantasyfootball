@@ -40,8 +40,8 @@ const LeagueSelector = ({setLeagueId, setLeagueYear}) => {
         teamArr.push(team)
       })
       setIsValidData(true)
-      setLeagueId(leagueIdState)
-      setLeagueYear(leagueYearState)
+      setLeagueId(parseInt(leagueIdState))
+      setLeagueYear(parseInt(leagueYearState))
     } catch {
       console.error("No league/season data found")
     }
