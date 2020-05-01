@@ -1,15 +1,12 @@
 import React from 'react';
 import './App.css';
 import Dashboard from "./components/Dashboard"
-
-
-
-// const myClient = new Client({ leagueId: leagueId});
+import LeagueSelector from './components/LeagueSelector';
 
 const App = () => {
   return (
     <div className="App">
-      <Dashboard />
+      <LeagueSelector />
     </div>
   );
 }
