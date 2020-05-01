@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Dashboard from "./Dashboard"
 import { TextField, FormControl, makeStyles, Button } from '@material-ui/core';
+import { connect } from 'react-redux'
+import {setLeagueYear, setLeagueId} from "../actions/leagueData"
 import { Client } from 'espn-fantasy-football-api';
 
 const useStyles = makeStyles({
@@ -15,29 +17,31 @@ const useStyles = makeStyles({
   },
 });
 
-const LeagueSelector = () => {
+const LeagueSelector = ({setLeagueId, setLeagueYear}) => {
   const classes = useStyles();
-  const [leagueId, setLeagueId] = useState("");
-  const [leagueYear, setLeagueYear] = useState("");
+  const [leagueIdState, setLeagueIdState] = useState("");
+  const [leagueYearState, setLeagueYearState] = useState("");
   const [isValidData, setIsValidData] = useState(false);
 
   const changeLeagueId = (event) => {
-    setLeagueId(event.target.value);
+    setLeagueIdState(event.target.value);
   }
 
   const changeLeagueYear = (event) => {
-    setLeagueYear(event.target.value);
+    setLeagueYearState(event.target.value);
   }
 
   const getTeams = async () => {
     try {
-      const client = new Client({leagueId: parseInt(leagueId)})
+      const client = new Client({leagueId: parseInt(leagueIdState)})
       const teamArr = []
-      const teams = await client.getTeamsAtWeek({seasonId: parseInt(leagueYear), scoringPeriodId: 1})
+      const teams = await client.getTeamsAtWeek({seasonId: parseInt(leagueYearState), scoringPeriodId: 1})
       teams.forEach((team) => {
         teamArr.push(team)
       })
       setIsValidData(true)
+      setLeagueId(leagueIdState)
+      setLeagueYear(leagueYearState)
     } catch {
       console.error("No league/season data found")
     }
@@ -47,8 +51,8 @@ const LeagueSelector = () => {
     <div className="App">
       <div className={classes.card}>
         <form>
-          <TextField value={leagueId} onChange={changeLeagueId} label="League ID"/>
-          <TextField value={leagueYear} onChange={changeLeagueYear} label="Year"/>
+          <TextField value={leagueIdState} onChange={changeLeagueId} label="League ID"/>
+          <TextField value={leagueYearState} onChange={changeLeagueYear} label="Year"/>
           <Button onClick={getTeams}>
             Submit
           </Button>
@@ -59,4 +63,11 @@ const LeagueSelector = () => {
   );
 }
 
-export default LeagueSelector;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setLeagueId: (leagueId) => dispatch(setLeagueId(leagueId)),
+    setLeagueYear: (leagueYear) => dispatch(setLeagueYear(leagueYear))
+  }
+}
+
+export default connect(null, mapDispatchToProps)(LeagueSelector);

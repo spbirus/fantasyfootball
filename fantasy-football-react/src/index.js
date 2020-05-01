@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import store from "./store";
+
+if (process.env.NODE_ENV === "development") window.store = store;
 
 ReactDOM.render(
   <React.StrictMode>
