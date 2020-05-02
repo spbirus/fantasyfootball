@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 
 const useStyles = makeStyles({
   drawer: {
-    width: "200px",
+    width: "250px",
   },
   leagueNameCard: {
     height: "40px",

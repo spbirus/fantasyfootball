@@ -25,7 +25,7 @@ const LeagueSelector = ({setLeagueId, setLeagueYear, setLeagueMembers, setLeague
   const history = useHistory();
   const tracking = useTracking();
   const [leagueIdState, setLeagueIdState] = useState("40974493");
-  const [leagueYearState, setLeagueYearState] = useState("2019");
+  const [leagueYearState, setLeagueYearState] = useState("2020");
 
   const changeLeagueId = (event) => {
     setLeagueIdState(event.target.value);

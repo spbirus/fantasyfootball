@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {playerRatingMap} from "../constants/playerPostion"
+import {playerSlotMap} from "../constants/playerPostion"
 
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -201,9 +201,9 @@ const Roster = ({ roster, leagueId, leagueYear }) => {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    const data = roster.sort((a,b) => a.defaultPositionId - b.defaultPositionId).map(player => {
+    const data = roster.sort((a,b) => a.lineupSlot - b.lineupSlot).map(player => {
       return (
-        createData(playerRatingMap[player.defaultPositionId], player.name, player.rankings.positionRank, player.rankings.totalRanking)
+        createData(player.lineupSlot, player.name, player.rankings.positionRank, player.rankings.totalRanking)
       )
     })
     setRows(data);
@@ -293,7 +293,7 @@ const Roster = ({ roster, leagueId, leagueYear }) => {
                         />
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {row.position}
+                        {playerSlotMap[row.position]}
                       </TableCell>
                       <TableCell align="left">{row.name}</TableCell>
                       <TableCell align="left">{row.posRank}</TableCell>

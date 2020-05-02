@@ -11,7 +11,6 @@ import {
 } from "react-router-dom";
 
 const PrivateRoute = ({ children, leagueId, ...rest }) => {
-  console.log(leagueId ? "yes" : "no")
   return (
     <Route
       {...rest}

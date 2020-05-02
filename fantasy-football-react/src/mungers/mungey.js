@@ -70,21 +70,30 @@ const createRosterStatsHardData = (roster) => {
   let totalPlayers = 0;
   if(roster){
     roster.entries.forEach(player => {
-      totalPlayers += 1;
       const playerPositionId = player.playerPoolEntry.player.defaultPositionId;
       const playerPositionRanking = player.playerPoolEntry.ratings[0].positionalRanking;
-      const totalRanking = player.playerPoolEntry.ratings[0].totalRanking;
-
-      if(positionPlayers[playerPositionId]){
-        positionPlayers[playerPositionId] = positionPlayers[playerPositionId] + 1;
-      } else {
-        positionPlayers[playerPositionId] = 1;
+      const playerLineupPositionId = player.lineupSlotId
+      
+      //only rank the starters
+      const totalRanking = determineOverallWeightedPlayerValue(playerPositionId, playerLineupPositionId, player.playerPoolEntry.ratings[0].totalRanking);
+      if (totalRanking !== 0) {
+        totalPlayers += 1;
       }
 
-      if(positionRankings[playerPositionId]){
-        positionRankings[playerPositionId] += playerPositionRanking;
-      } else {
-        positionRankings[playerPositionId] = playerPositionRanking;
+      const positionWeightedValue = determineWeightedPlayerValue(playerPositionId, playerLineupPositionId, playerPositionRanking);
+      if (positionWeightedValue !== 0){
+        // increase the total number of players at each position
+        if(positionPlayers[playerPositionId]){
+          positionPlayers[playerPositionId] = positionPlayers[playerPositionId] + 1;
+        } else {
+          positionPlayers[playerPositionId] = 1;
+        }
+        // increase the total ranking of each position
+        if(positionRankings[playerPositionId]){
+          positionRankings[playerPositionId] += positionWeightedValue;
+        } else {
+          positionRankings[playerPositionId] = positionWeightedValue
+        }
       }
       totalRankings += totalRanking
     })
@@ -113,15 +122,45 @@ const createRosterStatsRelationalData = (teams) => {
       const teamSorted2 = teams.sort((a, b) => {
         return a.rosterStats.positionRankingNumber[index] - b.rosterStats.positionRankingNumber[index]
       })
-      teamSorted2.map((team, idx) => {
+      // have to use a value here due to the fact that people could have 0 of a certain position and 
+      // idx in the .map would account for those empty slots
+      let value = 0;
+      teamSorted2.map((team) => {
         if(team.rosterStats.positionRankingNumber[index]){
-          team.rosterStats.positionRankingPosition[index] = idx + 1
+          value += 1
+          team.rosterStats.positionRankingPosition[index] = value
         }
       })
     } catch (e) {
       console.error(e)
     }
   })
+}
+
+const determineOverallWeightedPlayerValue = (playerPositionId, playerLineupPositionId, playerValue) => {
+  if (playerLineupPositionId !== (20 || 21)){
+    if(playerPositionId === 1){
+      //QB
+      return playerValue * 0.2;
+    } else if(playerPositionId === 2){
+      //RB
+      return playerValue * 0.4;
+    } else if(playerPositionId === 3){
+      // WR
+      return playerValue * 0.3;
+    } else if(playerPositionId === 4){
+      // TE
+      return playerValue * 0.1;
+    }
+  } else {
+    return 0
+  }
+}
+
+// if the player is at 20 (bench) or 21 (IR) then exclude them
+// As of 5/2 there is no weight on each position since we are already removing the bench players
+const determineWeightedPlayerValue = (playerPositionId, playerLineupPositionId, playerPositionRanking) => {
+  return playerLineupPositionId !== (20 || 21) ? playerPositionRanking : 0
 }
 
 
