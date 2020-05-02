@@ -2,18 +2,24 @@ import React, {useEffect, useState} from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import { leagueId, seasonId } from '../constants/DynastyLeague';
-import { Client } from 'espn-fantasy-football-api';
 import { Typography, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 
 const useStyles = makeStyles({
   drawer: {
     width: "200px",
   },
+  leagueNameCard: {
+    height: "40px",
+    textAlign: "center",
+  },
+  leagueNameText: {
+    fontSize: "24px"
+  }
 });
 
 const items = [
   {
-    name: "Depth Rankings",
+    name: "Depth Chart",
     id: "depthRankings"
   },
   // {
@@ -27,16 +33,17 @@ const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem}) => {
   const [leagueName, setLeagueName] = useState("")
 
   useEffect(async () => {
-    const client = new Client({leagueId})
-    const leagueInfo = await client.getLeagueInfo({seasonId})
-    setLeagueName(leagueInfo.name)
+    // TODO: set the league name
+    // setLeagueName(leagueInfo.name)
   }, [])
 
   return (
     <div id="drawer">
       <Drawer anchor={"left"} open={isDrawerOpen} onClose={toggleDrawer(false)}>
         <div className={classes.drawer}>
-          <Typography>{leagueName}</Typography>
+          <div className={classes.leagueNameCard}>
+            <Typography className={classes.leagueNameText}>{leagueName}</Typography>
+          </div>
           <div>
             <List >
               {items.map((item) => (

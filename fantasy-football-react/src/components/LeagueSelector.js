@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { TextField, makeStyles, Button } from '@material-ui/core';
 import { connect } from 'react-redux'
-import {setLeagueYear, setLeagueId} from "../actions/leagueData"
-import { Client } from 'espn-fantasy-football-api';
+import {setLeagueYear, setLeagueId, setLeagueMembers, setLeagueTeams} from "../actions/leagueData"
 import { useHistory, withRouter } from "react-router-dom";
 import { compose } from 'redux';
+import {getAllESPNData} from "../api/espnFantasyFootballapi"
+import espnDataMunger from "../mungers/mungey"
 
 const useStyles = makeStyles({
   card: {
@@ -18,7 +19,7 @@ const useStyles = makeStyles({
   },
 });
 
-const LeagueSelector = ({setLeagueId, setLeagueYear}) => {
+const LeagueSelector = ({setLeagueId, setLeagueYear, setLeagueMembers, setLeagueTeams}) => {
   const classes = useStyles();
   const history = useHistory();
   const [leagueIdState, setLeagueIdState] = useState("");
@@ -34,17 +35,15 @@ const LeagueSelector = ({setLeagueId, setLeagueYear}) => {
 
   const getTeams = async () => {
     try {
-      const client = new Client({leagueId: parseInt(leagueIdState)})
-      const teamArr = []
-      const teams = await client.getTeamsAtWeek({seasonId: parseInt(leagueYearState), scoringPeriodId: 1})
-      teams.forEach((team) => {
-        teamArr.push(team)
-      })
+      const response = await getAllESPNData({leagueID: parseInt(leagueIdState), leagueYear: parseInt(leagueYearState), scoringPeriod: 1});
+      const munge = espnDataMunger(response)
       setLeagueId(parseInt(leagueIdState))
       setLeagueYear(parseInt(leagueYearState))
+      setLeagueMembers(munge.members)
+      setLeagueTeams(munge.teams)
       history.push("/dashboard");
-    } catch {
-      console.error("No league/season data found")
+    } catch (e) {
+      console.error("No league/season data found", e)
     }
   }
 
@@ -66,7 +65,9 @@ const LeagueSelector = ({setLeagueId, setLeagueYear}) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setLeagueId: (leagueId) => dispatch(setLeagueId(leagueId)),
-    setLeagueYear: (leagueYear) => dispatch(setLeagueYear(leagueYear))
+    setLeagueYear: (leagueYear) => dispatch(setLeagueYear(leagueYear)),
+    setLeagueMembers: (leagueMembers) => dispatch(setLeagueMembers(leagueMembers)),
+    setLeagueTeams: (leagueTeams) => dispatch(setLeagueTeams(leagueTeams)),
   }
 }
 

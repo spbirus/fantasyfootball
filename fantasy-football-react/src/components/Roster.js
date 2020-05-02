@@ -1,8 +1,13 @@
-
 import React from "react";
 import { makeStyles } from '@material-ui/core/styles';
-import { List, ListItem, Typography, Card, CardContent } from "@material-ui/core";
-
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import {playerRatingMap} from "../constants/playerPostion"
 
 const useStyles = makeStyles({
   card: {
@@ -16,38 +21,45 @@ const useStyles = makeStyles({
     display: "table-row"
   },
   position: {
+    fontSize: "12px",
     padding: "3px",
     display: "table-cell",
     width: "6px"
   },
   name: {
+    fontSize: "12px",
     padding: "3px",
     display: "table-cell",
     width: "15px"
   }
 });
 
-const Roster = ({ roster }) => {
+const Roster = ({ roster, leagueId, leagueYear }) => {
   const classes = useStyles();
   
   return (
     <div>
-      <List component="nav">
-        {roster.map(player => {
-          return (
-            <ListItem button={false}>
-                <Card className={classes.card}>
-                  <CardContent className={classes.content}>
-                    <div className={classes.row}>
-                      <Typography className={classes.position}>{player.defaultPosition}</Typography>
-                      <Typography className={classes.name}>{player.fullName}</Typography>
-                    </div>
-                  </CardContent>
-                </Card>
-            </ListItem>
-          )
-        })}
-      </List>
+      <TableContainer component={Paper}>
+        <Table className={classes.table} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Position</TableCell>
+              <TableCell align="right">Name</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {roster.map(player => {
+              return (
+                <TableRow key={player.playerId}>
+                  <TableCell align="right">{playerRatingMap[player.defaultPositionId]}</TableCell>
+                  <TableCell align="right">{player.name}</TableCell>
+                </TableRow>
+                )
+              })
+            }
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   )
 }

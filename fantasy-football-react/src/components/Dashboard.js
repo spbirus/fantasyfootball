@@ -17,7 +17,6 @@ const Dashboard = () => {
   };
 
   const clickDrawerItem = (id) => {
-    console.log(id)
     setOpenPage(id)
     setIsDrawerOpen(false)
   }

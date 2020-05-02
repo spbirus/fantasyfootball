@@ -1,13 +1,13 @@
 
 import React from "react";
 import { makeStyles } from '@material-ui/core/styles';
-import { CardContent, Card, Typography } from "@material-ui/core";
+import { CardContent, Card, Typography, Grid } from "@material-ui/core";
 import Roster from "./Roster";
 
 
 const useStyles = makeStyles({
   root: {
-    minWidth: 275,
+    width: 300,
   },
   bullet: {
     display: 'inline-block',
@@ -15,6 +15,7 @@ const useStyles = makeStyles({
     transform: 'scale(0.8)',
   },
   title: {
+    textAlign: "center",
     fontSize: 14,
   },
   pos: {
@@ -22,20 +23,22 @@ const useStyles = makeStyles({
   },
 });
 
-const TeamCard = ({teamName, roster, abbreviation, logoURL}) => {
+const TeamCard = ({teamLocation, teamNickname, roster, abbreviation, logoURL}) => {
   const classes = useStyles();
   
   return (
-    <div>
-      <Card className={classes.root}>
-      <CardContent>
-        <Typography className={classes.title} color="textSecondary" gutterBottom>
-          {`${teamName} - ${abbreviation}`}
-        </Typography>
-        <Roster roster={roster} />
-      </CardContent>
-    </Card>
-    </div>
+    <Grid item xs>
+      <div>
+        <Card className={classes.root}>
+          <CardContent>
+            <Typography className={classes.title} gutterBottom>
+              {`${teamLocation} ${teamNickname} - ${abbreviation}`}
+            </Typography>
+            <Roster roster={roster} />
+          </CardContent>
+        </Card>
+      </div>
+    </Grid>
   )
 }
 

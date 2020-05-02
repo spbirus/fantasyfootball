@@ -1,28 +1,16 @@
 import React, { useState, useEffect } from 'react';
-
-import { Client } from 'espn-fantasy-football-api';
 import TeamCard from './TeamCard';
 import { connect } from 'react-redux';
+import { Grid } from '@material-ui/core';
 
-const DepthRankings = ({leagueId, leagueYear}) => {
-  const [teams, setTeams] = useState([])
-
-  useEffect(async () => {
-    const client = new Client({leagueId})
-    const teamArr = []
-    const teams = await client.getTeamsAtWeek({seasonId: leagueYear, scoringPeriodId: 1})
-    teams.forEach((team) => {
-      teamArr.push(team)
-    })
-    console.log(teamArr)
-    setTeams(teamArr)
-  }, [])
-  
+const DepthRankings = ({leagueTeams}) => {
 
   return (
     <div>
       Rankings
-      {teams.map((team) => {return (<TeamCard teamName={team.name} roster={team.roster} abbreviation={team.abbreviation} logoURL={team.logoURL} />)})}
+      <Grid container spacing={2}>
+        {leagueTeams.map((team) => {return (<TeamCard key={team.id} teamLocation={team.location} teamNickname={team.nickname} roster={team.roster} abbreviation={team.abbrev} logoURL={team.logoURL} />)})}
+      </Grid>
     </div>
   )
 }
@@ -30,7 +18,8 @@ const DepthRankings = ({leagueId, leagueYear}) => {
 const mapStateToProps = (state) => {
   return {
     leagueYear: state.leagueData.leagueYear,
-    leagueId: state.leagueData.leagueId
+    leagueId: state.leagueData.leagueId,
+    leagueTeams: state.leagueData.leagueTeams,
   }
 }
 
