@@ -114,7 +114,9 @@ const createRosterStatsRelationalData = (teams) => {
         return a.rosterStats.positionRankingNumber[index] - b.rosterStats.positionRankingNumber[index]
       })
       teamSorted2.map((team, idx) => {
-        team.rosterStats.positionRankingPosition[index] = idx + 1
+        if(team.rosterStats.positionRankingNumber[index]){
+          team.rosterStats.positionRankingPosition[index] = idx + 1
+        }
       })
     } catch (e) {
       console.error(e)
