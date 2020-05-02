@@ -16,7 +16,7 @@ const useStyles = makeStyles({
   },
   title: {
     textAlign: "center",
-    fontSize: 14,
+    fontSize: 20,
   },
   pos: {
     marginBottom: 12,
