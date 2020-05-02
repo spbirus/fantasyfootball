@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 
-import { Team } from 'espn-fantasy-football-api';
-import { leagueId, seasonId, scoringPeriod } from '../constants/DynastyLeague';
 import AppBarReact from './AppBar';
 import DrawerReact from './Drawer';
 import DepthRankings from './DepthRankings';
+import { withRouter } from 'react-router-dom'
 
 const Dashboard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -36,4 +35,4 @@ const Dashboard = () => {
 }
 
 
-export default Dashboard
+export default withRouter(Dashboard);

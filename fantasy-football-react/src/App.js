@@ -4,15 +4,21 @@ import Dashboard from "./components/Dashboard"
 import LeagueSelector from './components/LeagueSelector';
 import { Provider } from 'react-redux';
 import store from "./store"
+import {
+  Switch,
+  Route,
+  withRouter,
+} from 'react-router-dom'; 
 
-const App = () => {
+const App = () => { 
   return (
     <Provider store={store}>
-      <div className="App">
-        <LeagueSelector />
-      </div>
+      <Switch>
+        <Route exact path="/" component={LeagueSelector}/>
+        <Route exact path="/dashboard" component={Dashboard}/>
+      </Switch>
     </Provider>
   );
 }
 
-export default App;
+export default withRouter(App);

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import Dashboard from "./Dashboard"
-import { TextField, FormControl, makeStyles, Button } from '@material-ui/core';
+import React, { useState } from 'react';
+import { TextField, makeStyles, Button } from '@material-ui/core';
 import { connect } from 'react-redux'
 import {setLeagueYear, setLeagueId} from "../actions/leagueData"
 import { Client } from 'espn-fantasy-football-api';
+import { useHistory, withRouter } from "react-router-dom";
+import { compose } from 'redux';
 
 const useStyles = makeStyles({
   card: {
@@ -19,9 +20,9 @@ const useStyles = makeStyles({
 
 const LeagueSelector = ({setLeagueId, setLeagueYear}) => {
   const classes = useStyles();
+  const history = useHistory();
   const [leagueIdState, setLeagueIdState] = useState("");
   const [leagueYearState, setLeagueYearState] = useState("");
-  const [isValidData, setIsValidData] = useState(false);
 
   const changeLeagueId = (event) => {
     setLeagueIdState(event.target.value);
@@ -39,9 +40,9 @@ const LeagueSelector = ({setLeagueId, setLeagueYear}) => {
       teams.forEach((team) => {
         teamArr.push(team)
       })
-      setIsValidData(true)
       setLeagueId(parseInt(leagueIdState))
       setLeagueYear(parseInt(leagueYearState))
+      history.push("/dashboard");
     } catch {
       console.error("No league/season data found")
     }
@@ -58,7 +59,6 @@ const LeagueSelector = ({setLeagueId, setLeagueYear}) => {
           </Button>
         </form>
       </div>
-      {isValidData && <Dashboard />}
     </div>
   );
 }
@@ -70,4 +70,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(null, mapDispatchToProps)(LeagueSelector);
+export default compose(withRouter, connect(null, mapDispatchToProps))(LeagueSelector);

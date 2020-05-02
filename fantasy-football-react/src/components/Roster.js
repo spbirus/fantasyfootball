@@ -1,7 +1,7 @@
 
-import React, {useState,useEffect} from "react";
+import React from "react";
 import { makeStyles } from '@material-ui/core/styles';
-import { List, ListItem, ListItemText, Typography, Card, CardContent } from "@material-ui/core";
+import { List, ListItem, Typography, Card, CardContent } from "@material-ui/core";
 
 
 const useStyles = makeStyles({
