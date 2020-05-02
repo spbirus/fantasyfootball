@@ -22,6 +22,10 @@ const items = [
     name: "Depth Chart",
     id: "depthRankings"
   },
+  {
+    name: "Roster Rankings",
+    id: "rosterRankings"
+  }
   // {
   //   name: "Power Rankings",
   //   id: "powerRankings"

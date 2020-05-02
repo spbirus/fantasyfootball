@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 
 import AppBarReact from './AppBar';
 import DrawerReact from './Drawer';
-import DepthRankings from './DepthRankings';
+import HistoricalRoster from './HistoricalRoster';
 import { withRouter } from 'react-router-dom'
+import RosterRankings from './RosterRankings';
 
 const Dashboard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -27,7 +28,8 @@ const Dashboard = () => {
       <DrawerReact isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} selectDrawerItem={clickDrawerItem}/>
       <div style={{marginTop: "35px"}}>
         Dashboard
-        {openPage === "depthRankings" && <DepthRankings />}
+        {openPage === "depthRankings" && <HistoricalRoster />}
+        {openPage === "rosterRankings" && <RosterRankings />}
       </div>
     </div>
   )

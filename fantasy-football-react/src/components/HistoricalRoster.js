@@ -9,7 +9,7 @@ const useStyles = makeStyles({
   },
 });
 
-const DepthRankings = ({leagueTeams}) => {
+const HistoricalRoster = ({leagueTeams}) => {
   const classes = useStyles();
   const [filterString, setFilterString] = useState("")
 
@@ -37,4 +37,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(DepthRankings);
+export default connect(mapStateToProps)(HistoricalRoster);

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
+import { connect } from 'react-redux'
 import {playerRatingMap} from "../constants/playerPostion"
-
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -23,15 +23,15 @@ import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 
-function createData(position, name, posRank, ovlRank) {
-  return { position, name, posRank, ovlRank };
+function createData(name, ovlRank, qbRank, rbRank, wrRank, teRank) {
+  return { name, ovlRank, qbRank, rbRank, wrRank, teRank };
 }
 
 function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
+  if (b[orderBy] > a[orderBy]) {
     return -1;
   }
-  if (b[orderBy] > a[orderBy]) {
+  if (b[orderBy] < a[orderBy]) {
     return 1;
   }
   return 0;
@@ -54,10 +54,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'position', numeric: false, disablePadding: true, label: 'Position' },
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
-  { id: 'posRank', numeric: true, disablePadding: true, label: 'Pos Rank' },
   { id: 'ovlRank', numeric: true, disablePadding: true, label: 'Overall Rank' },
+  { id: 'qbRank', numeric: true, disablePadding: true, label: 'QB Rank' },
+  { id: 'rbRank', numeric: true, disablePadding: true, label: 'RB Rank' },
+  { id: 'wrRank', numeric: true, disablePadding: true, label: 'WR Rank' },
+  { id: 'teRank', numeric: true, disablePadding: true, label: 'TE Rank' },
 ];
 
 function EnhancedTableHead(props) {
@@ -149,7 +151,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Roster
+          Roster Rankings
         </Typography>
       )}
 
@@ -199,18 +201,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Roster = ({ roster, leagueId, leagueYear }) => {
+const RosterRankings = ({ leagueTeams }) => {
   const classes = useStyles();
-  const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('position');
+  const [order, setOrder] = useState('desc');
+  const [orderBy, setOrderBy] = useState('ovlRank');
   const [selected, setSelected] = useState([]);
   const [dense, setDense] = useState(true);
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    const data = roster.sort((a,b) => a.defaultPositionId - b.defaultPositionId).map(player => {
+    const data = leagueTeams.sort((a,b) => a.rosterStats.totalRanking - b.rosterStats.totalRanking).map(team => {
       return (
-        createData(playerRatingMap[player.defaultPositionId], player.name, player.rankings.positionRank, player.rankings.totalRanking)
+        createData((team.location + " " + team.nickname), parseFloat(team.rosterStats.totalRanking?.toFixed(2)), parseFloat(team.rosterStats.positionRanking[1]?.toFixed(2)), parseFloat(team.rosterStats.positionRanking[2]?.toFixed(2)), parseFloat(team.rosterStats.positionRanking[3]?.toFixed(2)), team.rosterStats.positionRanking[4] ? parseFloat(team.rosterStats.positionRanking[4]?.toFixed(2)) : null)
       )
     })
     setRows(data);
@@ -300,11 +302,13 @@ const Roster = ({ roster, leagueId, leagueYear }) => {
                         />
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {row.position}
+                        {row.name}
                       </TableCell>
-                      <TableCell align="left">{row.name}</TableCell>
-                      <TableCell align="left">{row.posRank}</TableCell>
                       <TableCell align="left">{row.ovlRank}</TableCell>
+                      <TableCell align="left">{row.qbRank}</TableCell>
+                      <TableCell align="left">{row.rbRank}</TableCell>
+                      <TableCell align="left">{row.wrRank}</TableCell>
+                      <TableCell align="left">{row.teRank}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -312,12 +316,14 @@ const Roster = ({ roster, leagueId, leagueYear }) => {
           </Table>
         </TableContainer>
       </Paper>
-      {/* <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      /> */}
     </div>
   )
 }
 
-export default Roster;
+const mapStateToProps = (state) => {
+  return {
+    leagueTeams: state.leagueData.leagueTeams,
+  }
+}
+
+export default connect(mapStateToProps)(RosterRankings);
