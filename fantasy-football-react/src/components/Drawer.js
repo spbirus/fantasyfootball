@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/core/styles';
-import { leagueId, seasonId } from '../constants/DynastyLeague';
 import { Typography, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import {PeopleRounded, ShowChartRounded} from "@material-ui/icons"
 
 const useStyles = makeStyles({
   drawer: {
@@ -20,11 +20,13 @@ const useStyles = makeStyles({
 const items = [
   {
     name: "Depth Chart",
-    id: "depthRankings"
+    id: "depthRankings",
+    icon: <PeopleRounded/>
   },
   {
     name: "Roster Rankings",
-    id: "rosterRankings"
+    id: "rosterRankings",
+    icon: <ShowChartRounded/>
   }
   // {
   //   name: "Power Rankings",
@@ -52,7 +54,7 @@ const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem}) => {
             <List >
               {items.map((item) => (
                 <ListItem button key={item.id} onClick={() => selectDrawerItem(item.id)}>
-                  <ListItemIcon>{}</ListItemIcon>
+                  <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.name} />
                 </ListItem>
               ))}

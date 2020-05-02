@@ -8,7 +8,7 @@ import RosterRankings from './RosterRankings';
 
 const Dashboard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [openPage, setOpenPage] = useState("");
+  const [openPage, setOpenPage] = useState("depthRankings");
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -27,7 +27,6 @@ const Dashboard = () => {
       <AppBarReact isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer}/>
       <DrawerReact isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} selectDrawerItem={clickDrawerItem}/>
       <div style={{marginTop: "35px"}}>
-        Dashboard
         {openPage === "depthRankings" && <HistoricalRoster />}
         {openPage === "rosterRankings" && <RosterRankings />}
       </div>

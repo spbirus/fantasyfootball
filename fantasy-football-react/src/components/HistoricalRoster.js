@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import TeamCard from './TeamCard';
 import { connect } from 'react-redux';
 import { Grid, TextField, makeStyles } from '@material-ui/core';

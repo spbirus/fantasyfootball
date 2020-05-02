@@ -6,6 +6,7 @@ import { useHistory, withRouter } from "react-router-dom";
 import { compose } from 'redux';
 import {getAllESPNData} from "../api/espnFantasyFootballapi"
 import espnDataMunger from "../mungers/mungey"
+import { useTracking, track } from 'react-tracking';
 
 const useStyles = makeStyles({
   card: {
@@ -22,6 +23,7 @@ const useStyles = makeStyles({
 const LeagueSelector = ({setLeagueId, setLeagueYear, setLeagueMembers, setLeagueTeams}) => {
   const classes = useStyles();
   const history = useHistory();
+  const tracking = useTracking();
   const [leagueIdState, setLeagueIdState] = useState("40974493");
   const [leagueYearState, setLeagueYearState] = useState("2019");
 
@@ -41,6 +43,9 @@ const LeagueSelector = ({setLeagueId, setLeagueYear, setLeagueMembers, setLeague
       setLeagueYear(parseInt(leagueYearState))
       setLeagueMembers(munge.members)
       setLeagueTeams(munge.teams)
+
+      tracking.trackEvent({action: "submit-league-info", leagueID: leagueIdState, leagueYear: leagueYearState})
+
       history.push("/dashboard");
     } catch (e) {
       console.error("No league/season data found", e)
@@ -71,4 +76,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default compose(withRouter, connect(null, mapDispatchToProps))(LeagueSelector);
+export default track()(compose(withRouter, connect(null, mapDispatchToProps))(LeagueSelector));
