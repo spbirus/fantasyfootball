@@ -184,28 +184,6 @@ EnhancedTableToolbar.propTypes = {
 };
 
 const useStyles = makeStyles((theme) => ({
-  // card: {
-  //   width: "100%"
-  // },
-  // content: {
-  //   width: "80%",
-  //   display: "table"
-  // },
-  // row: {
-  //   display: "table-row"
-  // },
-  // position: {
-  //   fontSize: "12px",
-  //   padding: "3px",
-  //   display: "table-cell",
-  //   width: "6px"
-  // },
-  // name: {
-  //   fontSize: "12px",
-  //   padding: "3px",
-  //   display: "table-cell",
-  //   width: "15px"
-  // },
   root: {
     width: '100%',
   },
@@ -243,7 +221,6 @@ const Roster = ({ roster, leagueId, leagueYear }) => {
         createData(playerRatingMap[player.defaultPositionId], player.name, player.rankings.positionRank, player.rankings.totalRanking)
       )
     })
-    console.log(data)
     setRows(data);
   }, [])
 
