@@ -40,19 +40,23 @@ const Roster = ({ roster, leagueId, leagueYear }) => {
   return (
     <div>
       <TableContainer component={Paper}>
-        <Table className={classes.table} aria-label="simple table">
+        <Table className={classes.table} aria-label="simple table" size="small">
           <TableHead>
             <TableRow>
               <TableCell>Position</TableCell>
               <TableCell align="right">Name</TableCell>
+              <TableCell align="right">Pos Rank</TableCell>
+              <TableCell align="right">Overall Rank</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {roster.map(player => {
+            {roster.sort((a,b) => a.defaultPositionId - b.defaultPositionId).map(player => {
               return (
                 <TableRow key={player.playerId}>
-                  <TableCell align="right">{playerRatingMap[player.defaultPositionId]}</TableCell>
+                  <TableCell align="right" key={player.defaultPositionId}>{playerRatingMap[player.defaultPositionId]}</TableCell>
                   <TableCell align="right">{player.name}</TableCell>
+                  <TableCell align="right">{player.rankings.positionRank}</TableCell>
+                  <TableCell align="right">{player.rankings.totalRanking}</TableCell>
                 </TableRow>
                 )
               })

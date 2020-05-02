@@ -22,8 +22,8 @@ const useStyles = makeStyles({
 const LeagueSelector = ({setLeagueId, setLeagueYear, setLeagueMembers, setLeagueTeams}) => {
   const classes = useStyles();
   const history = useHistory();
-  const [leagueIdState, setLeagueIdState] = useState("");
-  const [leagueYearState, setLeagueYearState] = useState("");
+  const [leagueIdState, setLeagueIdState] = useState("40974493");
+  const [leagueYearState, setLeagueYearState] = useState("2019");
 
   const changeLeagueId = (event) => {
     setLeagueIdState(event.target.value);

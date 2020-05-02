@@ -7,7 +7,7 @@ import Roster from "./Roster";
 
 const useStyles = makeStyles({
   root: {
-    width: 300,
+    width: 400,
   },
   bullet: {
     display: 'inline-block',
