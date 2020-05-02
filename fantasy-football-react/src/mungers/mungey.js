@@ -1,4 +1,4 @@
-
+import {times} from "lodash";
 
 const espnDataMunger = (data) => {
   const members = createMembers(data.members)
@@ -36,9 +36,10 @@ const createTeams = (teams) => {
       owners: team.owners,
       primaryOwner: team.primaryOwner,
       roster: createRoster(team.roster),
-      rosterStats: createRosterStats(team.roster),
+      rosterStats: createRosterStatsHardData(team.roster),
     })
   })
+  createRosterStatsRelationalData(mungedTeams);
   return mungedTeams;
 }
 
@@ -54,14 +55,14 @@ const createRoster = (roster) => {
           positionRank: player.playerPoolEntry.ratings[0].positionalRanking,
           totalRanking: player.playerPoolEntry.ratings[0].totalRanking,
         },
-        //stats
+        lineupSlot: player.lineupSlotId
       })
     })
   }
   return mungedRoster;
 }
 
-const createRosterStats = (roster) => {
+const createRosterStatsHardData = (roster) => {
   let mungedRosterStats = {};
   const positionRankings = [];
   const positionPlayers = [];
@@ -87,13 +88,38 @@ const createRosterStats = (roster) => {
       }
       totalRankings += totalRanking
     })
-    const positionRanking = positionRankings.map((rank, idx) => rank/positionPlayers[idx])
+    const positionRankingNumber = positionRankings.map((rank, idx) => rank/positionPlayers[idx])
     mungedRosterStats = {
-      totalRanking: totalRankings/totalPlayers,
-      positionRanking,
+      totalRankingNumber: totalRankings/totalPlayers,
+      positionRankingNumber,
+      positionRankingPosition: [],
     }
   }
   return mungedRosterStats
+}
+
+const createRosterStatsRelationalData = (teams) => {
+  // sort based on overall ranking
+  const teamSorted = teams.sort((a, b) => {
+    return a.rosterStats.totalRankingNumber - b.rosterStats.totalRankingNumber
+  })
+  teamSorted.map((team, idx) => {
+    team.rosterStats.totalRankingPosition = idx + 1;
+  })
+
+  // sort based on each position ranking
+  times(6).forEach(index => {
+    try{
+      const teamSorted2 = teams.sort((a, b) => {
+        return a.rosterStats.positionRankingNumber[index] - b.rosterStats.positionRankingNumber[index]
+      })
+      teamSorted2.map((team, idx) => {
+        team.rosterStats.positionRankingPosition[index] = idx + 1
+      })
+    } catch (e) {
+      console.error(e)
+    }
+  })
 }
 
 

@@ -14,6 +14,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 function createData(name, ovlRank, qbRank, rbRank, wrRank, teRank) {
   return { name, ovlRank, qbRank, rbRank, wrRank, teRank };
@@ -191,6 +192,9 @@ const useStyles = makeStyles((theme) => ({
     top: 20,
     width: 1,
   },
+  formcontrol: {
+    margin: "5px"
+  }
 }));
 
 const RosterRankings = ({ leagueTeams }) => {
@@ -200,15 +204,19 @@ const RosterRankings = ({ leagueTeams }) => {
   const [selected, setSelected] = useState([]);
   const [dense, setDense] = useState(true);
   const [rows, setRows] = useState([]);
+  const [isShowData, setIsShowData] = useState(false)
 
   useEffect(() => {
     const data = leagueTeams.sort((a,b) => a.rosterStats.totalRanking - b.rosterStats.totalRanking).map(team => {
       return (
-        createData((team.location + " " + team.nickname), parseFloat(team.rosterStats.totalRanking?.toFixed(2)), parseFloat(team.rosterStats.positionRanking[1]?.toFixed(2)), parseFloat(team.rosterStats.positionRanking[2]?.toFixed(2)), parseFloat(team.rosterStats.positionRanking[3]?.toFixed(2)), team.rosterStats.positionRanking[4] ? parseFloat(team.rosterStats.positionRanking[4]?.toFixed(2)) : null)
+        (isShowData) ?
+        createData((team.location + " " + team.nickname), parseFloat(team.rosterStats.totalRankingNumber?.toFixed(2)), parseFloat(team.rosterStats.positionRankingNumber[1]?.toFixed(2)), parseFloat(team.rosterStats.positionRankingNumber[2]?.toFixed(2)), parseFloat(team.rosterStats.positionRankingNumber[3]?.toFixed(2)), team.rosterStats.positionRankingNumber[4] ? parseFloat(team.rosterStats.positionRankingNumber[4]?.toFixed(2)) : null)
+        :
+        createData((team.location + " " + team.nickname), parseFloat(team.rosterStats.totalRankingPosition?.toFixed(2)), parseFloat(team.rosterStats.positionRankingPosition[1]?.toFixed(2)), parseFloat(team.rosterStats.positionRankingPosition[2]?.toFixed(2)), parseFloat(team.rosterStats.positionRankingPosition[3]?.toFixed(2)), team.rosterStats.positionRankingPosition[4] ? parseFloat(team.rosterStats.positionRankingPosition[4]?.toFixed(2)) : null)
       )
     })
     setRows(data);
-  }, [])
+  }, [isShowData])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -249,11 +257,27 @@ const RosterRankings = ({ leagueTeams }) => {
     setDense(event.target.checked);
   };
 
+  const handleShowDataChange = (event) => {
+    setIsShowData(event.target.checked)
+  }
+
   const isSelected = (name) => selected.indexOf(name) !== -1;
   
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isShowData}
+              onChange={handleShowDataChange}
+              name="checkedB"
+              color="primary"
+            />
+          }
+          label="Show Data"
+          className={classes.formcontrol}
+        />
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table
