@@ -1,8 +1,8 @@
 import { SET_LEAGUE_ID, SET_LEAGUE_YEAR, SET_LEAGUE_MEMBERS, SET_LEAGUE_TEAMS, SET_LEAGUE_NAME } from "../actiontypes/leagueData";
 
 const initialState = {
-  leagueId: 40974493,
-  leagueYear: 2019,
+  leagueId: null,
+  leagueYear: null,
   leagueMembers: [],
   leagueTeams: [],
   leagueName: "",
