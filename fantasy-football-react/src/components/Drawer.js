@@ -3,6 +3,7 @@ import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import {PeopleRounded, ShowChartRounded} from "@material-ui/icons"
+import { connect } from 'react-redux'
 
 const useStyles = makeStyles({
   drawer: {
@@ -34,14 +35,8 @@ const items = [
   // }
 ]
 
-const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem}) => {
+const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem, leagueName}) => {
   const classes = useStyles();
-  const [leagueName, setLeagueName] = useState("")
-
-  useEffect(async () => {
-    // TODO: set the league name
-    // setLeagueName(leagueInfo.name)
-  }, [])
 
   return (
     <div id="drawer">
@@ -66,5 +61,11 @@ const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem}) => {
   )
 }
 
+const mapStateToProps = (state) => {
+  return {
+    leagueName: state.leagueData.leagueName,
+  }
+}
 
-export default DrawerReact
+
+export default connect(mapStateToProps)(DrawerReact);

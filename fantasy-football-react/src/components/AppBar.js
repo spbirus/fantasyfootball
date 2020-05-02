@@ -25,7 +25,8 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     width: "10px",
-    float: "left"
+    float: "left",
+    color: "white"
   },
 }));
 

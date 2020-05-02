@@ -1,10 +1,11 @@
-import { SET_LEAGUE_ID, SET_LEAGUE_YEAR, SET_LEAGUE_MEMBERS, SET_LEAGUE_TEAMS } from "../actiontypes/leagueData";
+import { SET_LEAGUE_ID, SET_LEAGUE_YEAR, SET_LEAGUE_MEMBERS, SET_LEAGUE_TEAMS, SET_LEAGUE_NAME } from "../actiontypes/leagueData";
 
 const initialState = {
   leagueId: 40974493,
   leagueYear: 2019,
   leagueMembers: [],
   leagueTeams: [],
+  leagueName: "",
 }
 
 const leagueData = (state = initialState, action) => {
@@ -28,6 +29,11 @@ const leagueData = (state = initialState, action) => {
       return {
         ...state,
         leagueTeams: action.leagueTeams
+      }
+    case SET_LEAGUE_NAME:
+      return {
+        ...state,
+        leagueName: action.leagueName
       }
     default:
       return state

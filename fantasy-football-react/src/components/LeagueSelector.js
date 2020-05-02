@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { TextField, makeStyles, Button } from '@material-ui/core';
 import { connect } from 'react-redux'
-import {setLeagueYear, setLeagueId, setLeagueMembers, setLeagueTeams} from "../actions/leagueData"
+import {setLeagueYear, setLeagueId, setLeagueMembers, setLeagueTeams, setLeagueName} from "../actions/leagueData"
 import { useHistory, withRouter } from "react-router-dom";
 import { compose } from 'redux';
-import {getAllESPNData} from "../api/espnFantasyFootballapi"
+import {getAllESPNData, getESPNLeagueInfo} from "../api/espnFantasyFootballapi"
 import espnDataMunger from "../mungers/mungey"
 import { useTracking, track } from 'react-tracking';
 
@@ -20,7 +20,7 @@ const useStyles = makeStyles({
   },
 });
 
-const LeagueSelector = ({setLeagueId, setLeagueYear, setLeagueMembers, setLeagueTeams}) => {
+const LeagueSelector = ({setLeagueId, setLeagueYear, setLeagueMembers, setLeagueTeams, setLeagueName}) => {
   const classes = useStyles();
   const history = useHistory();
   const tracking = useTracking();
@@ -44,10 +44,14 @@ const LeagueSelector = ({setLeagueId, setLeagueYear, setLeagueMembers, setLeague
       setLeagueMembers(munge.members)
       setLeagueTeams(munge.teams)
 
+      const responseLeague = await getESPNLeagueInfo({leagueID: parseInt(leagueIdState), leagueYear: parseInt(leagueYearState)});
+      setLeagueName(responseLeague.settings.name)
+
       tracking.trackEvent({action: "submit-league-info", leagueID: leagueIdState, leagueYear: leagueYearState})
 
       history.push("/dashboard");
     } catch (e) {
+      alert("No league/season data found")
       console.error("No league/season data found", e)
     }
   }
@@ -73,6 +77,7 @@ const mapDispatchToProps = (dispatch) => {
     setLeagueYear: (leagueYear) => dispatch(setLeagueYear(leagueYear)),
     setLeagueMembers: (leagueMembers) => dispatch(setLeagueMembers(leagueMembers)),
     setLeagueTeams: (leagueTeams) => dispatch(setLeagueTeams(leagueTeams)),
+    setLeagueName: (leagueName) => dispatch(setLeagueName(leagueName)),
   }
 }
 
