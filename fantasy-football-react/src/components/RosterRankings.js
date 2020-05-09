@@ -64,14 +64,14 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
+        {/* <TableCell padding="checkbox">
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{ 'aria-label': 'select all desserts' }}
           />
-        </TableCell>
+        </TableCell> */}
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -175,7 +175,8 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   paper: {
-    width: '100%',
+    width: '97%',
+    margin: 'auto',
     marginBottom: theme.spacing(2),
   },
   table: {
@@ -216,7 +217,7 @@ const RosterRankings = ({ leagueTeams }) => {
       )
     })
     setRows(data);
-  }, [isShowData])
+  }, [isShowData, leagueTeams])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -311,12 +312,12 @@ const RosterRankings = ({ leagueTeams }) => {
                       key={row.name}
                       selected={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
+                      {/* <TableCell padding="checkbox">
                         <Checkbox
                           checked={isItemSelected}
                           inputProps={{ 'aria-labelledby': labelId }}
                         />
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell component="th" id={labelId} scope="row" padding="none">
                         {row.name}
                       </TableCell>

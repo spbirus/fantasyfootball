@@ -192,7 +192,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Roster = ({ roster, leagueId, leagueYear }) => {
+const Roster = ({ roster }) => {
   const classes = useStyles();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('position');
@@ -207,7 +207,7 @@ const Roster = ({ roster, leagueId, leagueYear }) => {
       )
     })
     setRows(data);
-  }, [])
+  }, [roster])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

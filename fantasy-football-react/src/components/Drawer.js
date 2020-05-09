@@ -1,9 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import Drawer from '@material-ui/core/Drawer';
-import { makeStyles } from '@material-ui/core/styles';
 import { Typography, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import {PeopleRounded, ShowChartRounded} from "@material-ui/icons"
 import { connect } from 'react-redux'
+import { TextField, makeStyles, Button } from '@material-ui/core';
+import {setLeagueYear, setLeagueId, setLeagueMembers, setLeagueTeams, setLeagueName, setLeagueWeek} from "../actions/leagueData"
+import { useHistory } from "react-router-dom";
+import {getAllESPNData, getESPNLeagueInfo} from "../api/espnFantasyFootballapi"
+import espnDataMunger from "../mungers/mungey"
+import { useTracking, track } from 'react-tracking';
 
 const useStyles = makeStyles({
   drawer: {
@@ -15,7 +20,11 @@ const useStyles = makeStyles({
   },
   leagueNameText: {
     fontSize: "24px"
-  }
+  },
+  card: {
+    width: "90%",
+    margin: "auto"
+  },
 });
 
 const items = [
@@ -35,8 +44,47 @@ const items = [
   // }
 ]
 
-const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem, leagueName}) => {
+const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem, leagueName, setLeagueId, setLeagueYear, setLeagueMembers, setLeagueTeams, setLeagueName, setLeagueWeek}) => {
   const classes = useStyles();
+  const history = useHistory();
+  const tracking = useTracking();
+  const [leagueIdState, setLeagueIdState] = useState("40974493");
+  const [leagueYearState, setLeagueYearState] = useState("2020");
+  const [leagueWeekState, setLeagueWeekState] = useState("1");
+
+  const changeLeagueId = (event) => {
+    setLeagueIdState(event.target.value);
+  }
+
+  const changeLeagueYear = (event) => {
+    setLeagueYearState(event.target.value);
+  }
+
+  const changeLeagueWeek = (event) => {
+    setLeagueWeekState(event.target.value);
+  }
+
+  const getTeams = async () => {
+    try {
+      const response = await getAllESPNData({leagueID: parseInt(leagueIdState), leagueYear: parseInt(leagueYearState), scoringPeriod: parseInt(leagueWeekState)});
+      const munge = espnDataMunger(response)
+      setLeagueId(parseInt(leagueIdState))
+      setLeagueYear(parseInt(leagueYearState))
+      setLeagueWeek(parseInt(leagueWeekState))
+      setLeagueMembers(munge.members)
+      setLeagueTeams(munge.teams)
+
+      const responseLeague = await getESPNLeagueInfo({leagueID: parseInt(leagueIdState), leagueYear: parseInt(leagueYearState)});
+      setLeagueName(responseLeague.settings.name)
+
+      tracking.trackEvent({action: "submit-league-info", leagueID: leagueIdState, leagueYear: leagueYearState})
+
+      history.push("/dashboard");
+    } catch (e) {
+      alert("No league/season data found")
+      console.error("No league/season data found", e)
+    }
+  }
 
   return (
     <div id="drawer">
@@ -44,6 +92,16 @@ const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem, leagueName})
         <div className={classes.drawer}>
           <div className={classes.leagueNameCard}>
             <Typography className={classes.leagueNameText}>{leagueName}</Typography>
+          </div>
+          <div className={classes.card}>
+            <form>
+              <TextField value={leagueIdState} onChange={changeLeagueId} label="League ID"/>
+              <TextField value={leagueYearState} onChange={changeLeagueYear} label="Year"/>
+              <TextField value={leagueWeekState} onChange={changeLeagueWeek} label="Week"/>
+              <Button onClick={getTeams}>
+                Submit
+              </Button>
+            </form>
           </div>
           <div>
             <List >
@@ -67,5 +125,16 @@ const mapStateToProps = (state) => {
   }
 }
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setLeagueId: (leagueId) => dispatch(setLeagueId(leagueId)),
+    setLeagueYear: (leagueYear) => dispatch(setLeagueYear(leagueYear)),
+    setLeagueMembers: (leagueMembers) => dispatch(setLeagueMembers(leagueMembers)),
+    setLeagueTeams: (leagueTeams) => dispatch(setLeagueTeams(leagueTeams)),
+    setLeagueWeek: (leagueWeek) => dispatch(setLeagueWeek(leagueWeek)),
+    setLeagueName: (leagueName) => dispatch(setLeagueName(leagueName)),
+  }
+}
 
-export default connect(mapStateToProps)(DrawerReact);
+
+export default track()(connect(mapStateToProps, mapDispatchToProps)(DrawerReact));

@@ -23,7 +23,7 @@ const HistoricalRoster = ({leagueTeams}) => {
           <TextField value={filterString} onChange={filterTeams} label="Filter Teams"/>
       </div>
       <Grid container spacing={2}>
-        {leagueTeams.filter(team => (team.location + team.nickname + team.abbrev).toLowerCase().includes(filterString)).map((team) => {return (<TeamCard key={team.id} teamLocation={team.location} teamNickname={team.nickname} roster={team.roster} abbreviation={team.abbrev} logoURL={team.logoURL} />)})}
+        {leagueTeams.sort((a, b) => a.id - b.id).filter(team => (team.location + team.nickname + team.abbrev).toLowerCase().includes(filterString)).map((team) => {return (<TeamCard key={team.id} teamLocation={team.location} teamNickname={team.nickname} roster={team.roster} abbreviation={team.abbrev} logoURL={team.logoURL} />)})}
       </Grid>
     </div>
   )
@@ -31,8 +31,6 @@ const HistoricalRoster = ({leagueTeams}) => {
 
 const mapStateToProps = (state) => {
   return {
-    leagueYear: state.leagueData.leagueYear,
-    leagueId: state.leagueData.leagueId,
     leagueTeams: state.leagueData.leagueTeams,
   }
 }
