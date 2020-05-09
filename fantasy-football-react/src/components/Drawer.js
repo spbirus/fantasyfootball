@@ -4,7 +4,7 @@ import { Typography, List, ListItem, ListItemIcon, ListItemText } from '@materia
 import {PeopleRounded, ShowChartRounded} from "@material-ui/icons"
 import { connect } from 'react-redux'
 import { TextField, makeStyles, Button } from '@material-ui/core';
-import {setLeagueYear, setLeagueId, setLeagueMembers, setLeagueTeams, setLeagueName, setLeagueWeek} from "../actions/leagueData"
+import {setLeagueYear, setLeagueId, setLeagueMembers, setLeagueTeams, setLeagueName, setLeagueWeek, setLeagueMatchups} from "../actions/leagueData"
 import { useHistory } from "react-router-dom";
 import {getAllESPNData, getESPNLeagueInfo} from "../api/espnFantasyFootballapi"
 import espnDataMunger from "../mungers/mungey"
@@ -44,7 +44,7 @@ const items = [
   // }
 ]
 
-const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem, leagueName, setLeagueId, setLeagueYear, setLeagueMembers, setLeagueTeams, setLeagueName, setLeagueWeek}) => {
+const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem, leagueName, setLeagueId, setLeagueYear, setLeagueMembers, setLeagueTeams, setLeagueName, setLeagueWeek, setLeagueMatchups}) => {
   const classes = useStyles();
   const history = useHistory();
   const tracking = useTracking();
@@ -73,6 +73,7 @@ const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem, leagueName, 
       setLeagueWeek(parseInt(leagueWeekState))
       setLeagueMembers(munge.members)
       setLeagueTeams(munge.teams)
+      setLeagueMatchups(munge.matchups)
 
       const responseLeague = await getESPNLeagueInfo({leagueID: parseInt(leagueIdState), leagueYear: parseInt(leagueYearState)});
       setLeagueName(responseLeague.settings.name)
@@ -133,6 +134,7 @@ const mapDispatchToProps = (dispatch) => {
     setLeagueTeams: (leagueTeams) => dispatch(setLeagueTeams(leagueTeams)),
     setLeagueWeek: (leagueWeek) => dispatch(setLeagueWeek(leagueWeek)),
     setLeagueName: (leagueName) => dispatch(setLeagueName(leagueName)),
+    setLeagueMatchups: (leagueMatchups) => dispatch(setLeagueMatchups(leagueMatchups)),
   }
 }
 

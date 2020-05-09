@@ -1,4 +1,4 @@
-import { SET_LEAGUE_ID, SET_LEAGUE_YEAR, SET_LEAGUE_MEMBERS, SET_LEAGUE_TEAMS, SET_LEAGUE_NAME, SET_LEAGUE_WEEK } from "../actiontypes/leagueData";
+import { SET_LEAGUE_ID, SET_LEAGUE_YEAR, SET_LEAGUE_MEMBERS, SET_LEAGUE_TEAMS, SET_LEAGUE_NAME, SET_LEAGUE_WEEK, SET_LEAGUE_MATCHUPS } from "../actiontypes/leagueData";
 
 export const setLeagueId = (leagueId) => {
   return {
@@ -39,5 +39,12 @@ export const setLeagueWeek = (leagueWeek) => {
   return {
     type: SET_LEAGUE_WEEK,
     leagueWeek
+  }
+}
+
+export const setLeagueMatchups = (leagueMatchups) => {
+  return {
+    type: SET_LEAGUE_MATCHUPS,
+    leagueMatchups
   }
 }

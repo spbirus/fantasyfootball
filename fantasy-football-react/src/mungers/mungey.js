@@ -1,12 +1,14 @@
-import {times} from "lodash";
+import {times, find} from "lodash";
 
 const espnDataMunger = (data) => {
   const members = createMembers(data.members)
   const teams = createTeams(data.teams)
+  const matchups = createMatchups(data.schedule)
 
   return {
     members,
-    teams
+    teams,
+    matchups
   }
 }
 
@@ -164,6 +166,74 @@ const determineOverallWeightedPlayerValue = (playerPositionId, playerLineupPosit
 // As of 5/2 there is no weight on each position since we are already removing the bench players
 const determineWeightedPlayerValue = (playerPositionId, playerLineupPositionId, playerPositionRanking) => {
   return playerLineupPositionId !== (20 || 21) ? playerPositionRanking : 0
+}
+
+const createMatchups = (schedule) => {
+  const teamSchedules = [];
+  schedule.forEach(matchup => {
+    const matchupPeriodId = matchup.matchupPeriodId
+
+    // determine all the points scored during each week
+    if (matchup.winner === "AWAY"){
+      // away win
+      const awayTeamId = matchup.away.teamId
+      const awayWinData = {
+        wins: 1,
+        loses: 0,
+        points: matchup.away.totalPoints,
+        matchupPeriodId
+      }
+      if(teamSchedules[awayTeamId]){
+        teamSchedules[awayTeamId].push(awayWinData)
+      } else {
+        teamSchedules[awayTeamId] = [awayWinData]
+      }
+
+      // home loss
+      const homeTeamId = matchup.home.teamId
+      const homeLossData = {
+        wins: 0,
+        loses: 1,
+        points: matchup.home.totalPoints,
+        matchupPeriodId
+      }
+      if(teamSchedules[homeTeamId]){
+        teamSchedules[homeTeamId].push(homeLossData)
+      } else {
+        teamSchedules[homeTeamId] = [homeLossData]
+      }
+    } else if (matchup.winner === "HOME") {
+      // away loss
+      const awayTeamId = matchup.away.teamId
+      const awayLossData = {
+        wins: 0,
+        loses: 1,
+        points: matchup.away.totalPoints,
+        matchupPeriodId
+      }
+      if(teamSchedules[awayTeamId]){
+        teamSchedules[awayTeamId].push(awayLossData)
+      } else {
+        teamSchedules[awayTeamId] = [awayLossData]
+      }
+
+      // home win
+      const homeTeamId = matchup.home.teamId
+      const homeWinData = {
+        wins: 1,
+        loses: 0,
+        points: matchup.home.totalPoints,
+        matchupPeriodId
+      }
+      if(teamSchedules[homeTeamId]){
+        teamSchedules[homeTeamId].push(homeWinData)
+      } else {
+        teamSchedules[homeTeamId] = [homeWinData]
+      }
+    }
+  })
+
+  return teamSchedules
 }
 
 

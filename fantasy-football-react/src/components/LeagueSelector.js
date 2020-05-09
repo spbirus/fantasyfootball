@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, makeStyles, Button } from '@material-ui/core';
 import { connect } from 'react-redux'
-import {setLeagueYear, setLeagueId, setLeagueMembers, setLeagueTeams, setLeagueName} from "../actions/leagueData"
+import {setLeagueYear, setLeagueId, setLeagueMembers, setLeagueTeams, setLeagueName, setLeagueMatchups} from "../actions/leagueData"
 import { useHistory, withRouter } from "react-router-dom";
 import { compose } from 'redux';
 import {getAllESPNData, getESPNLeagueInfo} from "../api/espnFantasyFootballapi"
@@ -20,7 +20,7 @@ const useStyles = makeStyles({
   },
 });
 
-const LeagueSelector = ({setLeagueId, setLeagueYear, setLeagueMembers, setLeagueTeams, setLeagueName}) => {
+const LeagueSelector = ({setLeagueId, setLeagueYear, setLeagueMembers, setLeagueTeams, setLeagueName, setLeagueMatchups}) => {
   const classes = useStyles();
   const history = useHistory();
   const tracking = useTracking();
@@ -43,6 +43,7 @@ const LeagueSelector = ({setLeagueId, setLeagueYear, setLeagueMembers, setLeague
       setLeagueYear(parseInt(leagueYearState))
       setLeagueMembers(munge.members)
       setLeagueTeams(munge.teams)
+      setLeagueMatchups(munge.matchups)
 
       const responseLeague = await getESPNLeagueInfo({leagueID: parseInt(leagueIdState), leagueYear: parseInt(leagueYearState)});
       setLeagueName(responseLeague.settings.name)
@@ -78,6 +79,7 @@ const mapDispatchToProps = (dispatch) => {
     setLeagueMembers: (leagueMembers) => dispatch(setLeagueMembers(leagueMembers)),
     setLeagueTeams: (leagueTeams) => dispatch(setLeagueTeams(leagueTeams)),
     setLeagueName: (leagueName) => dispatch(setLeagueName(leagueName)),
+    setLeagueMatchups: (leagueMatchups) => dispatch(setLeagueMatchups(leagueMatchups)),
   }
 }
 
