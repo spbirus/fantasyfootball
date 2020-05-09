@@ -73,13 +73,17 @@ const createRosterStatsHardData = (roster) => {
       const playerPositionId = player.playerPoolEntry.player.defaultPositionId;
       const playerPositionRanking = player.playerPoolEntry.ratings[0].positionalRanking;
       const playerLineupPositionId = player.lineupSlotId
+      const playerOverallRanking = player.playerPoolEntry.ratings[0].totalRanking;
       
-      //only rank the starters
-      const totalRanking = determineOverallWeightedPlayerValue(playerPositionId, playerLineupPositionId, player.playerPoolEntry.ratings[0].totalRanking);
+      // total the overall rankings
+      // only rank the starters
+      const totalRanking = determineOverallWeightedPlayerValue(playerPositionId, playerLineupPositionId, playerPositionRanking);
       if (totalRanking !== 0) {
         totalPlayers += 1;
       }
+      totalRankings += totalRanking
 
+      // total each positional ranking
       const positionWeightedValue = determineWeightedPlayerValue(playerPositionId, playerLineupPositionId, playerPositionRanking);
       if (positionWeightedValue !== 0){
         // increase the total number of players at each position
@@ -95,7 +99,6 @@ const createRosterStatsHardData = (roster) => {
           positionRankings[playerPositionId] = positionWeightedValue
         }
       }
-      totalRankings += totalRanking
     })
     const positionRankingNumber = positionRankings.map((rank, idx) => rank/positionPlayers[idx])
     mungedRosterStats = {
