@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import { Typography, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import {PeopleRounded, ShowChartRounded} from "@material-ui/icons"
+import {PeopleRounded, ShowChartRounded, MultilineChartRounded} from "@material-ui/icons"
 import { connect } from 'react-redux'
 import { TextField, makeStyles, Button } from '@material-ui/core';
 import {setLeagueYear, setLeagueId, setLeagueMembers, setLeagueTeams, setLeagueName, setLeagueWeek, setLeagueMatchups} from "../actions/leagueData"
@@ -37,20 +37,21 @@ const items = [
     name: "Roster Rankings",
     id: "rosterRankings",
     icon: <ShowChartRounded/>
+  },
+  {
+    name: "Power Rankings",
+    id: "powerRankings",
+    icon: <MultilineChartRounded />
   }
-  // {
-  //   name: "Power Rankings",
-  //   id: "powerRankings"
-  // }
 ]
 
-const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem, leagueName, setLeagueId, setLeagueYear, setLeagueMembers, setLeagueTeams, setLeagueName, setLeagueWeek, setLeagueMatchups}) => {
+const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem, leagueName, leagueId, leagueWeek, leagueYear, setLeagueId, setLeagueYear, setLeagueMembers, setLeagueTeams, setLeagueName, setLeagueWeek, setLeagueMatchups}) => {
   const classes = useStyles();
   const history = useHistory();
   const tracking = useTracking();
-  const [leagueIdState, setLeagueIdState] = useState("40974493");
-  const [leagueYearState, setLeagueYearState] = useState("2020");
-  const [leagueWeekState, setLeagueWeekState] = useState("1");
+  const [leagueIdState, setLeagueIdState] = useState(leagueId.toString());
+  const [leagueYearState, setLeagueYearState] = useState(leagueYear.toString());
+  const [leagueWeekState, setLeagueWeekState] = useState(leagueWeek.toString());
 
   const changeLeagueId = (event) => {
     setLeagueIdState(event.target.value);
@@ -123,6 +124,9 @@ const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem, leagueName, 
 const mapStateToProps = (state) => {
   return {
     leagueName: state.leagueData.leagueName,
+    leagueId: state.leagueData.leagueId,
+    leagueYear: state.leagueData.leagueYear,
+    leagueWeek: state.leagueData.leagueWeek,
   }
 }
 
