@@ -1,9 +1,9 @@
-import {times, find} from "lodash";
+import {times} from "lodash";
 
 const espnDataMunger = (data) => {
-  const members = createMembers(data.members)
-  const teams = createTeams(data.teams)
-  const matchups = createMatchups(data.schedule)
+  const members = data.members ? createMembers(data.members) : null;
+  const teams = data.teams ? createTeams(data.teams) : null;
+  const matchups = data.schedule ? createMatchups(data.schedule) : null;
 
   return {
     members,
@@ -178,8 +178,9 @@ const createMatchups = (schedule) => {
       // away win
       const awayTeamId = matchup.away.teamId
       const awayWinData = {
-        wins: 1,
-        loses: 0,
+        wins: teamSchedules[awayTeamId] ? teamSchedules[awayTeamId][teamSchedules[awayTeamId].length - 1].wins + 1 : 1,
+        loses: teamSchedules[awayTeamId] ? teamSchedules[awayTeamId][teamSchedules[awayTeamId].length - 1].loses : 0,
+        won: true,
         points: matchup.away.totalPoints,
         matchupPeriodId
       }
@@ -192,8 +193,9 @@ const createMatchups = (schedule) => {
       // home loss
       const homeTeamId = matchup.home.teamId
       const homeLossData = {
-        wins: 0,
-        loses: 1,
+        wins: teamSchedules[homeTeamId] ? teamSchedules[homeTeamId][teamSchedules[homeTeamId].length - 1].wins : 0,
+        loses: teamSchedules[homeTeamId] ? teamSchedules[homeTeamId][teamSchedules[homeTeamId].length - 1].loses + 1 : 1,
+        won: false,
         points: matchup.home.totalPoints,
         matchupPeriodId
       }
@@ -206,8 +208,9 @@ const createMatchups = (schedule) => {
       // away loss
       const awayTeamId = matchup.away.teamId
       const awayLossData = {
-        wins: 0,
-        loses: 1,
+        wins: teamSchedules[awayTeamId] ? teamSchedules[awayTeamId][teamSchedules[awayTeamId].length - 1].wins : 0,
+        loses: teamSchedules[awayTeamId] ? teamSchedules[awayTeamId][teamSchedules[awayTeamId].length - 1].loses + 1 : 1,
+        won: false,
         points: matchup.away.totalPoints,
         matchupPeriodId
       }
@@ -220,8 +223,9 @@ const createMatchups = (schedule) => {
       // home win
       const homeTeamId = matchup.home.teamId
       const homeWinData = {
-        wins: 1,
-        loses: 0,
+        wins: teamSchedules[homeTeamId] ? teamSchedules[homeTeamId][teamSchedules[homeTeamId].length - 1].wins + 1 : 1,
+        loses: teamSchedules[homeTeamId] ? teamSchedules[homeTeamId][teamSchedules[homeTeamId].length - 1].loses : 0,
+        won: true,
         points: matchup.home.totalPoints,
         matchupPeriodId
       }

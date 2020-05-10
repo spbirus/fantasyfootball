@@ -5,6 +5,7 @@ import DrawerReact from './Drawer';
 import HistoricalRoster from './HistoricalRoster';
 import { withRouter } from 'react-router-dom'
 import RosterRankings from './RosterRankings';
+import PowerRankings from './PowerRankings';
 
 const Dashboard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -29,6 +30,7 @@ const Dashboard = () => {
       <div style={{marginTop: "35px"}}>
         {openPage === "depthRankings" && <HistoricalRoster />}
         {openPage === "rosterRankings" && <RosterRankings />}
+        {openPage === "powerRankings" && <PowerRankings />}
       </div>
     </div>
   )
