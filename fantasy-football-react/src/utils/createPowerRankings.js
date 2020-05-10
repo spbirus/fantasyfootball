@@ -62,7 +62,7 @@ const createPowerRankings = async (teams, matchups, leagueId, leagueYear) => {
   
   // calculate the overall power rankings
   // will have to turn all of these numbers into relative values i.e. 1-16
-
+  
   // push to powerRankingsOverTime
   // powerRankingsOverTime[teamId].push()
 }
