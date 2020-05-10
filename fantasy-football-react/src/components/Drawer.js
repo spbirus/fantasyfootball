@@ -9,6 +9,7 @@ import { useHistory } from "react-router-dom";
 import {getAllESPNData, getESPNLeagueInfo} from "../api/espnFantasyFootballapi"
 import espnDataMunger from "../mungers/mungey"
 import { useTracking, track } from 'react-tracking';
+import pjson from '../../package.json';
 
 const useStyles = makeStyles({
   drawer: {
@@ -25,6 +26,12 @@ const useStyles = makeStyles({
     width: "90%",
     margin: "auto"
   },
+  version: {
+    color: "grey",
+    bottom: 0,
+    position: "fixed",
+    left: "100px"
+  }
 });
 
 const items = [
@@ -114,6 +121,9 @@ const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem, leagueName, 
                 </ListItem>
               ))}
             </List>
+          </div>
+          <div className={classes.version}>
+            {pjson.version}
           </div>
         </div>
       </Drawer>
