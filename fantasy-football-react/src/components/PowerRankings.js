@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {makeStyles} from '@material-ui/core';
 import { connect } from 'react-redux'
 import createPowerRankings from '../utils/createPowerRankings'
@@ -17,8 +17,8 @@ const colors = ['#00FFFF','#808080','#000080','#C0C0C0','#000000','#008000','#80
 const PowerRankings = ({leagueTeams, leagueMatchups, leagueId, leagueYear}) => {
   const classes = useStyles();
   const [rankings, setRankings] = useState({});
-  
-  useEffect( async () => {
+
+  const createPower = useCallback(async () => {
     const teamRankings = await createPowerRankings(leagueTeams, leagueMatchups, leagueId, leagueYear);
     const datasets = [];
     teamRankings.forEach(teamRank => {
@@ -38,12 +38,16 @@ const PowerRankings = ({leagueTeams, leagueMatchups, leagueId, leagueYear}) => {
       labels,
       datasets
     })
+  }, [])
+  
+  useEffect(() => {
+    createPower();
   }, [leagueTeams, leagueMatchups, leagueId, leagueYear])
 
   return (
     <div>
       <div className={classes.lineChart}>
-        <Line
+        {rankings && <Line
             data={rankings}
             options={{
               title:{
@@ -73,7 +77,7 @@ const PowerRankings = ({leagueTeams, leagueMatchups, leagueId, leagueYear}) => {
               ],
               }
             }}
-          />
+          />}
         </div>
     </div>
   )
