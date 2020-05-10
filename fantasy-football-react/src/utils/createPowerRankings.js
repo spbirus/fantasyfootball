@@ -21,15 +21,15 @@ const createPowerRankings = async (teams, matchups, leagueId, leagueYear) => {
 
       // record
       const winPct = weekData.wins / (week + 1);
-      (teamWeeklyRecord[teamId]?.data) ? teamWeeklyRecord[teamId].data.push({number: winPct}) : teamWeeklyRecord[teamId] = {id: teamId, data: [{number: winPct}]};
+      (teamWeeklyRecord[teamId]?.data) ? teamWeeklyRecord[teamId].data.push({number: winPct}) : teamWeeklyRecord[teamId] = {id: parseInt(teamId), data: [{number: winPct}]};
 
       // consistent wins
       const winsInARow = (week !== 0) ? (weekData.won ? teamWeeklyCons[teamId].data[week - 1].number + 1 : 0) : (weekData.won ? 1 : 0);
-      (teamWeeklyCons[teamId]?.data) ? teamWeeklyCons[teamId].data.push({number: winsInARow}) : teamWeeklyCons[teamId] = {id: teamId, data: [{number: winsInARow}]};
+      (teamWeeklyCons[teamId]?.data) ? teamWeeklyCons[teamId].data.push({number: winsInARow}) : teamWeeklyCons[teamId] = {id: parseInt(teamId), data: [{number: winsInARow}]};
 
       // overall wins against everyone else in the league
       const overallWins = determineOverallWins(weekData.points, matchups, week, teamId);
-      (teamWeeklyOvlWins[teamId]?.data) ? teamWeeklyOvlWins[teamId].data.push({number: overallWins}) : teamWeeklyOvlWins[teamId] = {id: teamId, data: [{number: overallWins}]};
+      (teamWeeklyOvlWins[teamId]?.data) ? teamWeeklyOvlWins[teamId].data.push({number: overallWins}) : teamWeeklyOvlWins[teamId] = {id: parseInt(teamId), data: [{number: overallWins}]};
 
       // PPG
       let points = 0;
@@ -37,34 +37,39 @@ const createPowerRankings = async (teams, matchups, leagueId, leagueYear) => {
         points = points + teamWeeklyMatchups[idx].points;
       })
       const ppg = points / (week + 1);
-      (teamWeeklyPPG[teamId]?.data) ? teamWeeklyPPG[teamId].data.push({number: ppg}) : teamWeeklyPPG[teamId] = {id: teamId, data: [{number: ppg}]};
+      (teamWeeklyPPG[teamId]?.data) ? teamWeeklyPPG[teamId].data.push({number: ppg}) : teamWeeklyPPG[teamId] = {id: parseInt(teamId), data: [{number: ppg}]};
 
       // rankings
       const weekRank = find(weeklyRankings.teams, {'id': parseInt(teamId)})?.rosterStats.totalRankingPosition;
-      (teamWeeklyRank[teamId]?.data) ? teamWeeklyRank[teamId].data.push({number: weekRank}) : teamWeeklyRank[teamId] = {id: teamId, data: [{number: weekRank}]};
+      (teamWeeklyRank[teamId]?.data) ? teamWeeklyRank[teamId].data.push({number: weekRank}) : teamWeeklyRank[teamId] = {id: parseInt(teamId), data: [{number: weekRank}]};
 
       
 
     }
 
   }
+  
+  // will have to turn all of these numbers into relative values i.e. 1-16
   createRelationalData(teamWeeklyRecord, weeksPlayed, false)
   createRelationalData(teamWeeklyPPG, weeksPlayed, false)
   createRelationalData(teamWeeklyCons, weeksPlayed, false)
   createRelationalData(teamWeeklyOvlWins, weeksPlayed, true)
   createRelationalData(teamWeeklyRank, weeksPlayed, true)
-  console.log(teamWeeklyRecord)
-  console.log(teamWeeklyPPG)
-  console.log(teamWeeklyCons)
-  console.log(teamWeeklyOvlWins)
-  console.log(teamWeeklyRank)
 
-  
   // calculate the overall power rankings
-  // will have to turn all of these numbers into relative values i.e. 1-16
-  
-  // push to powerRankingsOverTime
-  // powerRankingsOverTime[teamId].push()
+  for(const week of times(weeksPlayed)){
+    teams.forEach(team => {
+      const record = find(teamWeeklyRecord, {'id': parseInt(team.id)}).data[week].position
+      const ppg = find(teamWeeklyPPG, {'id': parseInt(team.id)}).data[week].position
+      const cons = find(teamWeeklyCons, {'id': parseInt(team.id)}).data[week].position
+      const ovlWins = find(teamWeeklyOvlWins, {'id': parseInt(team.id)}).data[week].position
+      const rank = find(teamWeeklyRank, {'id': parseInt(team.id)}).data[week].position
+      const powerRankNumber = (record + ppg + cons + ovlWins + rank) / 7;
+      (powerRankingsOverTime[team.id]?.data) ? powerRankingsOverTime[team.id].data.push({number: powerRankNumber}) : powerRankingsOverTime[team.id] = {id: parseInt(team.id), data: [{number: powerRankNumber}]};
+    })
+  }
+  createRelationalData(powerRankingsOverTime, weeksPlayed, true)
+  return powerRankingsOverTime
 }
 
 const determineOverallWins = (weeksPoints, matchups, week, teamId) => {
