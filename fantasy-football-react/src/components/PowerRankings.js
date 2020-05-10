@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import createPowerRankings from '../utils/createPowerRankings'
 import {Line} from 'react-chartjs-2';
 import {find} from "lodash";
+import PowerRankingSkeleton from '../skeletons/powerRankingSkeleton';
 
 const useStyles = makeStyles({
   lineChart: {
@@ -16,7 +17,7 @@ const colors = ['#00FFFF','#808080','#000080','#C0C0C0','#000000','#008000','#80
 
 const PowerRankings = ({leagueTeams, leagueMatchups, leagueId, leagueYear}) => {
   const classes = useStyles();
-  const [rankings, setRankings] = useState({});
+  const [rankings, setRankings] = useState(null);
 
   const createPower = useCallback(async () => {
     const teamRankings = await createPowerRankings(leagueTeams, leagueMatchups, leagueId, leagueYear);
@@ -47,7 +48,7 @@ const PowerRankings = ({leagueTeams, leagueMatchups, leagueId, leagueYear}) => {
   return (
     <div>
       <div className={classes.lineChart}>
-        {rankings && <Line
+        {rankings ? <Line
             data={rankings}
             options={{
               title:{
@@ -62,22 +63,18 @@ const PowerRankings = ({leagueTeams, leagueMatchups, leagueId, leagueYear}) => {
               scales: {
                 yAxes: [
                   {
-                    type: "linear", // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                    type: "linear",
                     display: true,
                     position: "left",
                     id: "y-axis-2",
                     ticks : {
                           reverse : true
                     },
-                    // grid line settings
-                    // gridLines: {
-                    //     drawOnChartArea: false, // only want the grid lines for one axis to show up
-                    // },
                   }
               ],
               }
             }}
-          />}
+          /> : <PowerRankingSkeleton/>}
         </div>
     </div>
   )

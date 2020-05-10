@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import TeamCard from './TeamCard';
 import { connect } from 'react-redux';
 import { Grid, TextField, makeStyles } from '@material-ui/core';
+import TeamCardSkeleton from "../skeletons/teamCardSkeleton";
+import {times} from "lodash";
 
 const useStyles = makeStyles({
   search: {
@@ -23,7 +25,9 @@ const HistoricalRoster = ({leagueTeams}) => {
           <TextField value={filterString} onChange={filterTeams} label="Filter Teams"/>
       </div>
       <Grid container spacing={2}>
-        {leagueTeams.sort((a, b) => a.id - b.id).filter(team => (team.location + team.nickname + team.abbrev).toLowerCase().includes(filterString)).map((team) => {return (<TeamCard key={team.id} teamLocation={team.location} teamNickname={team.nickname} roster={team.roster} abbreviation={team.abbrev} logoURL={team.logoURL} />)})}
+        {leagueTeams ? leagueTeams.sort((a, b) => a.id - b.id).filter(team => (team.location + team.nickname + team.abbrev).toLowerCase().includes(filterString)).map((team) => {return (<TeamCard key={team.id} teamLocation={team.location} teamNickname={team.nickname} roster={team.roster} abbreviation={team.abbrev} logoURL={team.logoURL} />)})
+        : times(4).map( () => <TeamCardSkeleton /> )
+        }
       </Grid>
     </div>
   )
