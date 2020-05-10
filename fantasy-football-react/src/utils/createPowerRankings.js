@@ -24,7 +24,7 @@ const createPowerRankings = async (teams, matchups, leagueId, leagueYear) => {
       (teamWeeklyRecord[teamId]?.data) ? teamWeeklyRecord[teamId].data.push({number: winPct}) : teamWeeklyRecord[teamId] = {id: teamId, data: [{number: winPct}]};
 
       // consistent wins
-      const winsInARow = (week !== 0) ? (weekData.won ? teamWeeklyCons[teamId][week - 1] + 1 : 0) : (weekData.won ? 1 : 0);
+      const winsInARow = (week !== 0) ? (weekData.won ? teamWeeklyCons[teamId].data[week - 1].number + 1 : 0) : (weekData.won ? 1 : 0);
       (teamWeeklyCons[teamId]?.data) ? teamWeeklyCons[teamId].data.push({number: winsInARow}) : teamWeeklyCons[teamId] = {id: teamId, data: [{number: winsInARow}]};
 
       // overall wins against everyone else in the league
@@ -48,11 +48,11 @@ const createPowerRankings = async (teams, matchups, leagueId, leagueYear) => {
     }
 
   }
-  createRelationalData(teamWeeklyRecord, weeksPlayed)
-  createRelationalData(teamWeeklyPPG, weeksPlayed)
-  createRelationalData(teamWeeklyCons, weeksPlayed)
-  createRelationalData(teamWeeklyOvlWins, weeksPlayed)
-  createRelationalData(teamWeeklyRank, weeksPlayed)
+  createRelationalData(teamWeeklyRecord, weeksPlayed, false)
+  createRelationalData(teamWeeklyPPG, weeksPlayed, false)
+  createRelationalData(teamWeeklyCons, weeksPlayed, false)
+  createRelationalData(teamWeeklyOvlWins, weeksPlayed, true)
+  createRelationalData(teamWeeklyRank, weeksPlayed, true)
   console.log(teamWeeklyRecord)
   console.log(teamWeeklyPPG)
   console.log(teamWeeklyCons)
@@ -77,22 +77,12 @@ const determineOverallWins = (weeksPoints, matchups, week, teamId) => {
   return wins;
 }
 
-const createRelationalData = (d, numberOfWeeks) => {
+const createRelationalData = (d, numberOfWeeks, direction) => {
   times(numberOfWeeks).forEach(weekIndex => {
-    d.sort((a,b) => b.data[weekIndex].number - a.data[weekIndex].number).map((item, idx) => 
+    d.sort((a,b) => direction ? a.data[weekIndex].number - b.data[weekIndex].number : b.data[weekIndex].number - a.data[weekIndex].number).map((item, idx) => 
       item.data[weekIndex].position = idx + 1
     )
   })
-
-
-  // sort based on each position ranking
-  // times(numberOfWeeks).forEach(weekIndex => {
-  //   times(numberOfTeams).forEach(teamIndex => {
-  //     data.sort((a, b) => a[teamIndex][weekIndex].number - b[teamIndex][weekIndex].number).map((item, idx) => 
-  //       item[teamIndex][weekIndex].position = idx + 1
-  //     )
-  //   })
-  // })
 }
 
 export default createPowerRankings
