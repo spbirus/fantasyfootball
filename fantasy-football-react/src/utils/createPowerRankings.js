@@ -2,7 +2,17 @@ import { times, find } from 'lodash';
 import { getRosterESPNData } from '../api/espnFantasyFootballapi';
 import espnDataMunger from '../mungers/mungey';
 
-const createPowerRankings = async (teams, matchups, leagueId, leagueYear) => {
+const createPowerRankings = async (
+  teams,
+  matchups,
+  leagueId,
+  leagueYear,
+  setWeeklyRecord,
+  setWeeklyCons,
+  setWeeklyOvlWins,
+  setWeeklyPPG,
+  setWeeklyRank,
+) => {
   const powerRankingsOverTime = [];
   const teamWeeklyRecord = [];
   const teamWeeklyCons = [];
@@ -75,6 +85,13 @@ const createPowerRankings = async (teams, matchups, leagueId, leagueYear) => {
   createRelationalData(teamWeeklyCons, weeksPlayed, false);
   createRelationalData(teamWeeklyOvlWins, weeksPlayed, true);
   createRelationalData(teamWeeklyRank, weeksPlayed, true);
+
+  // set the redux store values
+  setWeeklyRecord(teamWeeklyRecord);
+  setWeeklyPPG(teamWeeklyPPG);
+  setWeeklyCons(teamWeeklyCons);
+  setWeeklyOvlWins(teamWeeklyOvlWins);
+  setWeeklyRank(teamWeeklyRank);
 
   // calculate the overall power rankings
   for (const week of times(weeksPlayed)) {

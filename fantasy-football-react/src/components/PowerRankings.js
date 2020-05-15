@@ -5,6 +5,13 @@ import createPowerRankings from '../utils/createPowerRankings';
 import { Line } from 'react-chartjs-2';
 import { find } from 'lodash';
 import PowerRankingSkeleton from '../skeletons/powerRankingSkeleton';
+import {
+  setWeeklyRecord,
+  setWeeklyCons,
+  setWeeklyOvlWins,
+  setWeeklyPPG,
+  setWeeklyRank,
+} from '../actions/powerRankingData';
 
 const useStyles = makeStyles({
   lineChart: {
@@ -32,7 +39,17 @@ const colors = [
   '#FFFF00',
 ];
 
-const PowerRankings = ({ leagueTeams, leagueMatchups, leagueId, leagueYear }) => {
+const PowerRankings = ({
+  leagueTeams,
+  leagueMatchups,
+  leagueId,
+  leagueYear,
+  setWeeklyRecord,
+  setWeeklyCons,
+  setWeeklyOvlWins,
+  setWeeklyPPG,
+  setWeeklyRank,
+}) => {
   const classes = useStyles();
   const [rankings, setRankings] = useState(null);
 
@@ -42,6 +59,11 @@ const PowerRankings = ({ leagueTeams, leagueMatchups, leagueId, leagueYear }) =>
       leagueMatchups,
       leagueId,
       leagueYear,
+      setWeeklyRecord,
+      setWeeklyCons,
+      setWeeklyOvlWins,
+      setWeeklyPPG,
+      setWeeklyRank,
     );
     const datasets = [];
     teamRankings.forEach((teamRank) => {
@@ -115,4 +137,13 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(PowerRankings);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setWeeklyRecord: (weeklyRecord) => dispatch(setWeeklyRecord(weeklyRecord)),
+    setWeeklyCons: (weeklyCons) => dispatch(setWeeklyCons(weeklyCons)),
+    setWeeklyOvlWins: (weeklyOvlWins) => dispatch(setWeeklyOvlWins(weeklyOvlWins)),
+    setWeeklyPPG: (weeklyPPG) => dispatch(setWeeklyPPG(weeklyPPG)),
+    setWeeklyRank: (weeklyRank) => dispatch(setWeeklyRank(weeklyRank)),
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(PowerRankings);
