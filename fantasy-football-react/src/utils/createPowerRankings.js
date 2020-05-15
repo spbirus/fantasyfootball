@@ -78,13 +78,22 @@ const createPowerRankings = async (teams, matchups, leagueId, leagueYear) => {
 
   // calculate the overall power rankings
   for (const week of times(weeksPlayed)) {
+    const weekNumber = week + 1;
     teams.forEach((team) => {
       const record = find(teamWeeklyRecord, { id: parseInt(team.id) }).data[week].position;
       const ppg = find(teamWeeklyPPG, { id: parseInt(team.id) }).data[week].position;
       const cons = find(teamWeeklyCons, { id: parseInt(team.id) }).data[week].position;
       const ovlWins = find(teamWeeklyOvlWins, { id: parseInt(team.id) }).data[week].position;
       const rank = find(teamWeeklyRank, { id: parseInt(team.id) }).data[week].position;
-      const powerRankNumber = (record + ppg + cons + ovlWins + rank) / 7;
+      // power ranking tweaks to include weight for record after week 3
+      // and weight for consistency after week 8
+      const powerRankNumber =
+        (record * (weekNumber < 3 ? 1.2 : 3) +
+          ppg +
+          cons * (weekNumber < 8 ? 0 : 1.2) +
+          ovlWins +
+          rank * 1.5) /
+        7;
       powerRankingsOverTime[team.id]?.data
         ? powerRankingsOverTime[team.id].data.push({ number: powerRankNumber })
         : (powerRankingsOverTime[team.id] = {
