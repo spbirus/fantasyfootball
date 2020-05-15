@@ -1,58 +1,96 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import { Typography, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import {PeopleRounded, ShowChartRounded, MultilineChartRounded} from "@material-ui/icons"
-import { connect } from 'react-redux'
+import { PeopleRounded, ShowChartRounded, MultilineChartRounded } from '@material-ui/icons';
+import { connect } from 'react-redux';
 import { TextField, makeStyles, Button } from '@material-ui/core';
-import {setLeagueYear, setLeagueId, setLeagueMembers, setLeagueTeams, setLeagueName, setLeagueWeek, setLeagueMatchups} from "../actions/leagueData"
-import { useHistory } from "react-router-dom";
-import {getAllESPNData, getESPNLeagueInfo} from "../api/espnFantasyFootballapi"
-import espnDataMunger from "../mungers/mungey"
+import {
+  setLeagueYear,
+  setLeagueId,
+  setLeagueMembers,
+  setLeagueTeams,
+  setLeagueName,
+  setLeagueWeek,
+  setLeagueMatchups,
+} from '../actions/leagueData';
+import { useHistory } from 'react-router-dom';
+import { getAllESPNData, getESPNLeagueInfo } from '../api/espnFantasyFootballapi';
+import espnDataMunger from '../mungers/mungey';
 import { useTracking, track } from 'react-tracking';
 import pjson from '../../package.json';
+import {
+  setWeeklyRecord,
+  setWeeklyCons,
+  setWeeklyOvlWins,
+  setWeeklyPPG,
+  setWeeklyRank,
+  setPowerRankings,
+} from '../actions/powerRankingData';
+import createPowerRankings from '../utils/createPowerRankings';
 
 const useStyles = makeStyles({
   drawer: {
-    width: "250px",
+    width: '250px',
   },
   leagueNameCard: {
-    height: "40px",
-    textAlign: "center",
+    height: '40px',
+    textAlign: 'center',
   },
   leagueNameText: {
-    fontSize: "24px"
+    fontSize: '24px',
   },
   card: {
-    width: "90%",
-    margin: "auto"
+    width: '90%',
+    margin: 'auto',
   },
   version: {
-    color: "grey",
+    color: 'grey',
     bottom: 0,
-    position: "fixed",
-    left: "100px"
-  }
+    position: 'fixed',
+    left: '100px',
+  },
 });
 
 const items = [
   {
-    name: "Depth Chart",
-    id: "depthRankings",
-    icon: <PeopleRounded/>
+    name: 'Depth Chart',
+    id: 'depthRankings',
+    icon: <PeopleRounded />,
   },
   {
-    name: "Roster Rankings",
-    id: "rosterRankings",
-    icon: <ShowChartRounded/>
+    name: 'Roster Rankings',
+    id: 'rosterRankings',
+    icon: <ShowChartRounded />,
   },
   {
-    name: "Power Rankings",
-    id: "powerRankings",
-    icon: <MultilineChartRounded />
-  }
-]
+    name: 'Power Rankings',
+    id: 'powerRankings',
+    icon: <MultilineChartRounded />,
+  },
+];
 
-const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem, leagueName, leagueId, leagueWeek, leagueYear, setLeagueId, setLeagueYear, setLeagueMembers, setLeagueTeams, setLeagueName, setLeagueWeek, setLeagueMatchups}) => {
+const DrawerReact = ({
+  isDrawerOpen,
+  toggleDrawer,
+  selectDrawerItem,
+  leagueName,
+  leagueId,
+  leagueWeek,
+  leagueYear,
+  setLeagueId,
+  setLeagueYear,
+  setLeagueMembers,
+  setLeagueTeams,
+  setLeagueName,
+  setLeagueWeek,
+  setLeagueMatchups,
+  setWeeklyRecord,
+  setWeeklyCons,
+  setWeeklyOvlWins,
+  setWeeklyPPG,
+  setWeeklyRank,
+  setPowerRankings,
+}) => {
   const classes = useStyles();
   const history = useHistory();
   const tracking = useTracking();
@@ -62,58 +100,79 @@ const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem, leagueName, 
 
   const changeLeagueId = (event) => {
     setLeagueIdState(event.target.value);
-  }
+  };
 
   const changeLeagueYear = (event) => {
     setLeagueYearState(event.target.value);
-  }
+  };
 
   const changeLeagueWeek = (event) => {
     setLeagueWeekState(event.target.value);
-  }
+  };
 
   const getTeams = async () => {
     try {
-      const response = await getAllESPNData({leagueID: parseInt(leagueIdState), leagueYear: parseInt(leagueYearState), scoringPeriod: parseInt(leagueWeekState)});
-      const munge = espnDataMunger(response)
-      setLeagueId(parseInt(leagueIdState))
-      setLeagueYear(parseInt(leagueYearState))
-      setLeagueWeek(parseInt(leagueWeekState))
-      setLeagueMembers(munge.members)
-      setLeagueTeams(munge.teams)
-      setLeagueMatchups(munge.matchups)
+      const response = await getAllESPNData({
+        leagueID: parseInt(leagueIdState),
+        leagueYear: parseInt(leagueYearState),
+        scoringPeriod: parseInt(leagueWeekState),
+      });
+      const munge = espnDataMunger(response);
+      setLeagueId(parseInt(leagueIdState));
+      setLeagueYear(parseInt(leagueYearState));
+      setLeagueWeek(parseInt(leagueWeekState));
+      setLeagueMembers(munge.members);
+      setLeagueTeams(munge.teams);
+      setLeagueMatchups(munge.matchups);
 
-      const responseLeague = await getESPNLeagueInfo({leagueID: parseInt(leagueIdState), leagueYear: parseInt(leagueYearState)});
-      setLeagueName(responseLeague.settings.name)
+      const responseLeague = await getESPNLeagueInfo({
+        leagueID: parseInt(leagueIdState),
+        leagueYear: parseInt(leagueYearState),
+      });
+      setLeagueName(responseLeague.settings.name);
 
-      tracking.trackEvent({action: "submit-league-info", leagueID: leagueIdState, leagueYear: leagueYearState})
+      tracking.trackEvent({
+        action: 'submit-league-info',
+        leagueID: leagueIdState,
+        leagueYear: leagueYearState,
+      });
 
-      history.push("/dashboard");
+      // create power rankings
+      await createPowerRankings(
+        munge.teams,
+        munge.matchups,
+        parseInt(leagueIdState),
+        parseInt(leagueYearState),
+        setWeeklyRecord,
+        setWeeklyCons,
+        setWeeklyOvlWins,
+        setWeeklyPPG,
+        setWeeklyRank,
+        setPowerRankings,
+      );
     } catch (e) {
-      alert("No league/season data found")
-      console.error("No league/season data found", e)
+      alert('No league/season data found');
+      console.error('No league/season data found', e);
     }
-  }
+  };
 
   return (
     <div id="drawer">
-      <Drawer anchor={"left"} open={isDrawerOpen} onClose={toggleDrawer(false)}>
+      <Drawer anchor={'left'} open={isDrawerOpen} onClose={toggleDrawer(false)}>
         <div className={classes.drawer}>
           <div className={classes.leagueNameCard}>
             <Typography className={classes.leagueNameText}>{leagueName}</Typography>
           </div>
           <div className={classes.card}>
             <form>
-              <TextField value={leagueIdState} onChange={changeLeagueId} label="League ID"/>
-              <TextField value={leagueYearState} onChange={changeLeagueYear} label="Year"/>
-              <TextField value={leagueWeekState} onChange={changeLeagueWeek} label="Week"/>
-              <Button onClick={getTeams}>
-                Submit
-              </Button>
+              <TextField value={leagueIdState} onChange={changeLeagueId} label="League ID" />
+              <TextField value={leagueYearState} onChange={changeLeagueYear} label="Year" />
+              <TextField value={leagueWeekState} onChange={changeLeagueWeek} label="Week" />
+              <Button onClick={getTeams}>Submit</Button>
             </form>
           </div>
           <div>
-            <List >
+            <List>
               {items.map((item) => (
                 <ListItem button key={item.id} onClick={() => selectDrawerItem(item.id)}>
                   <ListItemIcon>{item.icon}</ListItemIcon>
@@ -122,14 +181,12 @@ const DrawerReact = ({isDrawerOpen, toggleDrawer, selectDrawerItem, leagueName, 
               ))}
             </List>
           </div>
-          <div className={classes.version}>
-            {pjson.version}
-          </div>
+          <div className={classes.version}>{pjson.version}</div>
         </div>
       </Drawer>
     </div>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state) => {
   return {
@@ -137,8 +194,8 @@ const mapStateToProps = (state) => {
     leagueId: state.leagueData.leagueId,
     leagueYear: state.leagueData.leagueYear,
     leagueWeek: state.leagueData.leagueWeek,
-  }
-}
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -149,8 +206,13 @@ const mapDispatchToProps = (dispatch) => {
     setLeagueWeek: (leagueWeek) => dispatch(setLeagueWeek(leagueWeek)),
     setLeagueName: (leagueName) => dispatch(setLeagueName(leagueName)),
     setLeagueMatchups: (leagueMatchups) => dispatch(setLeagueMatchups(leagueMatchups)),
-  }
-}
-
+    setWeeklyRecord: (weeklyRecord) => dispatch(setWeeklyRecord(weeklyRecord)),
+    setWeeklyCons: (weeklyCons) => dispatch(setWeeklyCons(weeklyCons)),
+    setWeeklyOvlWins: (weeklyOvlWins) => dispatch(setWeeklyOvlWins(weeklyOvlWins)),
+    setWeeklyPPG: (weeklyPPG) => dispatch(setWeeklyPPG(weeklyPPG)),
+    setWeeklyRank: (weeklyRank) => dispatch(setWeeklyRank(weeklyRank)),
+    setPowerRankings: (powerRankings) => dispatch(setPowerRankings(powerRankings)),
+  };
+};
 
 export default track()(connect(mapStateToProps, mapDispatchToProps)(DrawerReact));

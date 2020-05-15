@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from "react";
-import {playerSlotMap} from "../constants/playerPostion"
+import React, { useState, useEffect } from 'react';
+import { playerSlotMap } from '../constants/playerPostion';
 
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -201,20 +201,25 @@ const Roster = ({ roster }) => {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    const data = roster.sort((a,b) => a.lineupSlot - b.lineupSlot).map(player => {
-      return (
-        createData(player.lineupSlot, player.name, player.rankings.positionRank, player.rankings.totalRanking)
-      )
-    })
+    const data = roster
+      .sort((a, b) => a.lineupSlot - b.lineupSlot)
+      .map((player) => {
+        return createData(
+          player.lineupSlot,
+          player.name,
+          player.rankings.positionRank,
+          player.rankings.totalRanking,
+        );
+      });
     setRows(data);
-  }, [roster])
+  }, [roster]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-  
+
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = rows.map((n) => n.name);
@@ -249,7 +254,7 @@ const Roster = ({ roster }) => {
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
-  
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -271,36 +276,35 @@ const Roster = ({ roster }) => {
               rowCount={rows.length}
             />
             <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+              {stableSort(rows, getComparator(order, orderBy)).map((row, index) => {
+                const isItemSelected = isSelected(row.name);
+                const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.name)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.name}
-                      selected={isItemSelected}
-                    >
-                      {/* <TableCell padding="checkbox">
+                return (
+                  <TableRow
+                    hover
+                    onClick={(event) => handleClick(event, row.name)}
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={row.name}
+                    selected={isItemSelected}
+                  >
+                    {/* <TableCell padding="checkbox">
                         <Checkbox
                           checked={isItemSelected}
                           inputProps={{ 'aria-labelledby': labelId }}
                         />
                       </TableCell> */}
-                      <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {playerSlotMap[row.position]}
-                      </TableCell>
-                      <TableCell align="left">{row.name}</TableCell>
-                      <TableCell align="left">{row.posRank}</TableCell>
-                      <TableCell align="left">{row.ovlRank}</TableCell>
-                    </TableRow>
-                  );
-                })}
+                    <TableCell component="th" id={labelId} scope="row" padding="none">
+                      {playerSlotMap[row.position]}
+                    </TableCell>
+                    <TableCell align="left">{row.name}</TableCell>
+                    <TableCell align="left">{row.posRank}</TableCell>
+                    <TableCell align="left">{row.ovlRank}</TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>
@@ -310,7 +314,7 @@ const Roster = ({ roster }) => {
         label="Dense padding"
       /> */}
     </div>
-  )
-}
+  );
+};
 
 export default Roster;

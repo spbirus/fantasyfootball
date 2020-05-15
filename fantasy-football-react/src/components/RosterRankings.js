@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from "react";
-import { connect } from 'react-redux'
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -14,7 +14,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 function createData(name, ovlRank, qbRank, rbRank, wrRank, teRank) {
   return { name, ovlRank, qbRank, rbRank, wrRank, teRank };
@@ -194,8 +194,8 @@ const useStyles = makeStyles((theme) => ({
     width: 1,
   },
   formcontrol: {
-    margin: "5px"
-  }
+    margin: '5px',
+  },
 }));
 
 const RosterRankings = ({ leagueTeams }) => {
@@ -205,26 +205,43 @@ const RosterRankings = ({ leagueTeams }) => {
   const [selected, setSelected] = useState([]);
   const [dense, setDense] = useState(true);
   const [rows, setRows] = useState([]);
-  const [isShowData, setIsShowData] = useState(false)
+  const [isShowData, setIsShowData] = useState(false);
 
   useEffect(() => {
-    const data = leagueTeams.sort((a,b) => a.rosterStats.totalRanking - b.rosterStats.totalRanking).map(team => {
-      return (
-        (isShowData) ?
-        createData((team.location + " " + team.nickname), parseFloat(team.rosterStats.totalRankingNumber?.toFixed(2)), parseFloat(team.rosterStats.positionRankingNumber[1]?.toFixed(2)), parseFloat(team.rosterStats.positionRankingNumber[2]?.toFixed(2)), parseFloat(team.rosterStats.positionRankingNumber[3]?.toFixed(2)), team.rosterStats.positionRankingNumber[4] ? parseFloat(team.rosterStats.positionRankingNumber[4]?.toFixed(2)) : null)
-        :
-        createData((team.location + " " + team.nickname), parseFloat(team.rosterStats.totalRankingPosition?.toFixed(2)), parseFloat(team.rosterStats.positionRankingPosition[1]?.toFixed(2)), parseFloat(team.rosterStats.positionRankingPosition[2]?.toFixed(2)), parseFloat(team.rosterStats.positionRankingPosition[3]?.toFixed(2)), team.rosterStats.positionRankingPosition[4] ? parseFloat(team.rosterStats.positionRankingPosition[4]?.toFixed(2)) : null)
-      )
-    })
+    const data = leagueTeams
+      .sort((a, b) => a.rosterStats.totalRanking - b.rosterStats.totalRanking)
+      .map((team) => {
+        return isShowData
+          ? createData(
+              team.location + ' ' + team.nickname,
+              parseFloat(team.rosterStats.totalRankingNumber?.toFixed(2)),
+              parseFloat(team.rosterStats.positionRankingNumber[1]?.toFixed(2)),
+              parseFloat(team.rosterStats.positionRankingNumber[2]?.toFixed(2)),
+              parseFloat(team.rosterStats.positionRankingNumber[3]?.toFixed(2)),
+              team.rosterStats.positionRankingNumber[4]
+                ? parseFloat(team.rosterStats.positionRankingNumber[4]?.toFixed(2))
+                : null,
+            )
+          : createData(
+              team.location + ' ' + team.nickname,
+              parseFloat(team.rosterStats.totalRankingPosition?.toFixed(2)),
+              parseFloat(team.rosterStats.positionRankingPosition[1]?.toFixed(2)),
+              parseFloat(team.rosterStats.positionRankingPosition[2]?.toFixed(2)),
+              parseFloat(team.rosterStats.positionRankingPosition[3]?.toFixed(2)),
+              team.rosterStats.positionRankingPosition[4]
+                ? parseFloat(team.rosterStats.positionRankingPosition[4]?.toFixed(2))
+                : null,
+            );
+      });
     setRows(data);
-  }, [isShowData, leagueTeams])
+  }, [isShowData, leagueTeams]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-  
+
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = rows.map((n) => n.name);
@@ -259,11 +276,11 @@ const RosterRankings = ({ leagueTeams }) => {
   };
 
   const handleShowDataChange = (event) => {
-    setIsShowData(event.target.checked)
-  }
+    setIsShowData(event.target.checked);
+  };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
-  
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -297,50 +314,49 @@ const RosterRankings = ({ leagueTeams }) => {
               rowCount={rows.length}
             />
             <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+              {stableSort(rows, getComparator(order, orderBy)).map((row, index) => {
+                const isItemSelected = isSelected(row.name);
+                const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.name)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.name}
-                      selected={isItemSelected}
-                    >
-                      {/* <TableCell padding="checkbox">
+                return (
+                  <TableRow
+                    hover
+                    onClick={(event) => handleClick(event, row.name)}
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={row.name}
+                    selected={isItemSelected}
+                  >
+                    {/* <TableCell padding="checkbox">
                         <Checkbox
                           checked={isItemSelected}
                           inputProps={{ 'aria-labelledby': labelId }}
                         />
                       </TableCell> */}
-                      <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="left">{row.ovlRank}</TableCell>
-                      <TableCell align="left">{row.qbRank}</TableCell>
-                      <TableCell align="left">{row.rbRank}</TableCell>
-                      <TableCell align="left">{row.wrRank}</TableCell>
-                      <TableCell align="left">{row.teRank}</TableCell>
-                    </TableRow>
-                  );
-                })}
+                    <TableCell component="th" id={labelId} scope="row" padding="none">
+                      {row.name}
+                    </TableCell>
+                    <TableCell align="left">{row.ovlRank}</TableCell>
+                    <TableCell align="left">{row.qbRank}</TableCell>
+                    <TableCell align="left">{row.rbRank}</TableCell>
+                    <TableCell align="left">{row.wrRank}</TableCell>
+                    <TableCell align="left">{row.teRank}</TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>
       </Paper>
     </div>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state) => {
   return {
     leagueTeams: state.leagueData.leagueTeams,
-  }
-}
+  };
+};
 
 export default connect(mapStateToProps)(RosterRankings);

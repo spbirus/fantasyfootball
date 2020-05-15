@@ -1,4 +1,4 @@
-import {times} from "lodash";
+import { times } from 'lodash';
 
 const espnDataMunger = (data) => {
   const members = data.members ? createMembers(data.members) : null;
@@ -8,27 +8,27 @@ const espnDataMunger = (data) => {
   return {
     members,
     teams,
-    matchups
-  }
-}
+    matchups,
+  };
+};
 
 const createMembers = (members) => {
   const mungedMembers = [];
-  members.forEach( member => {
+  members.forEach((member) => {
     mungedMembers.push({
       firstName: member.firstName,
       lastName: member.lastName,
       displayName: member.displayName,
       id: member.id,
-    })
-  })
-  return mungedMembers
-}
+    });
+  });
+  return mungedMembers;
+};
 
 const createTeams = (teams) => {
   const mungedTeams = [];
-  teams.forEach(team => {
-    window.team = team
+  teams.forEach((team) => {
+    window.team = team;
     mungedTeams.push({
       id: team.id,
       abbrev: team.abbrev,
@@ -39,16 +39,16 @@ const createTeams = (teams) => {
       primaryOwner: team.primaryOwner,
       roster: createRoster(team.roster),
       rosterStats: createRosterStatsHardData(team.roster),
-    })
-  })
+    });
+  });
   createRosterStatsRelationalData(mungedTeams);
   return mungedTeams;
-}
+};
 
 const createRoster = (roster) => {
   const mungedRoster = [];
-  if(roster){
-    roster.entries.forEach(player => {
+  if (roster) {
+    roster.entries.forEach((player) => {
       mungedRoster.push({
         playerId: player.playerId,
         name: player.playerPoolEntry.player.fullName,
@@ -57,12 +57,12 @@ const createRoster = (roster) => {
           positionRank: player.playerPoolEntry.ratings[0].positionalRanking,
           totalRanking: player.playerPoolEntry.ratings[0].totalRanking,
         },
-        lineupSlot: player.lineupSlotId
-      })
-    })
+        lineupSlot: player.lineupSlotId,
+      });
+    });
   }
   return mungedRoster;
-}
+};
 
 const createRosterStatsHardData = (roster) => {
   let mungedRosterStats = {};
@@ -70,175 +70,208 @@ const createRosterStatsHardData = (roster) => {
   const positionPlayers = [];
   let totalRankings = 0;
   let totalPlayers = 0;
-  if(roster){
-    roster.entries.forEach(player => {
+  if (roster) {
+    roster.entries.forEach((player) => {
       const playerPositionId = player.playerPoolEntry.player.defaultPositionId;
       const playerPositionRanking = player.playerPoolEntry.ratings[0].positionalRanking;
-      const playerLineupPositionId = player.lineupSlotId
+      const playerLineupPositionId = player.lineupSlotId;
       const playerOverallRanking = player.playerPoolEntry.ratings[0].totalRanking;
-      
+
       // total the overall rankings
       // only rank the starters
-      const totalRanking = determineOverallWeightedPlayerValue(playerPositionId, playerLineupPositionId, playerPositionRanking);
+      const totalRanking = determineOverallWeightedPlayerValue(
+        playerPositionId,
+        playerLineupPositionId,
+        playerPositionRanking,
+      );
       if (totalRanking !== 0) {
         totalPlayers += 1;
       }
-      totalRankings += totalRanking
+      totalRankings += totalRanking;
 
       // total each positional ranking
-      const positionWeightedValue = determineWeightedPlayerValue(playerPositionId, playerLineupPositionId, playerPositionRanking);
-      if (positionWeightedValue !== 0){
+      const positionWeightedValue = determineWeightedPlayerValue(
+        playerPositionId,
+        playerLineupPositionId,
+        playerPositionRanking,
+      );
+      if (positionWeightedValue !== 0) {
         // increase the total number of players at each position
-        if(positionPlayers[playerPositionId]){
+        if (positionPlayers[playerPositionId]) {
           positionPlayers[playerPositionId] = positionPlayers[playerPositionId] + 1;
         } else {
           positionPlayers[playerPositionId] = 1;
         }
         // increase the total ranking of each position
-        if(positionRankings[playerPositionId]){
+        if (positionRankings[playerPositionId]) {
           positionRankings[playerPositionId] += positionWeightedValue;
         } else {
-          positionRankings[playerPositionId] = positionWeightedValue
+          positionRankings[playerPositionId] = positionWeightedValue;
         }
       }
-    })
-    const positionRankingNumber = positionRankings.map((rank, idx) => rank/positionPlayers[idx])
+    });
+    const positionRankingNumber = positionRankings.map((rank, idx) => rank / positionPlayers[idx]);
     mungedRosterStats = {
-      totalRankingNumber: totalRankings/totalPlayers,
+      totalRankingNumber: totalRankings / totalPlayers,
       positionRankingNumber,
       positionRankingPosition: [],
-    }
+    };
   }
-  return mungedRosterStats
-}
+  return mungedRosterStats;
+};
 
 const createRosterStatsRelationalData = (teams) => {
   // sort based on overall ranking
   const teamSorted = teams.sort((a, b) => {
-    return a.rosterStats.totalRankingNumber - b.rosterStats.totalRankingNumber
-  })
+    return a.rosterStats.totalRankingNumber - b.rosterStats.totalRankingNumber;
+  });
   teamSorted.map((team, idx) => {
     team.rosterStats.totalRankingPosition = idx + 1;
-  })
+  });
 
   // sort based on each position ranking
-  times(6).forEach(index => {
-    try{
+  times(6).forEach((index) => {
+    try {
       const teamSorted2 = teams.sort((a, b) => {
-        return a.rosterStats.positionRankingNumber[index] - b.rosterStats.positionRankingNumber[index]
-      })
-      // have to use a value here due to the fact that people could have 0 of a certain position and 
+        return (
+          a.rosterStats.positionRankingNumber[index] - b.rosterStats.positionRankingNumber[index]
+        );
+      });
+      // have to use a value here due to the fact that people could have 0 of a certain position and
       // idx in the .map would account for those empty slots
       let value = 0;
       teamSorted2.map((team) => {
-        if(team.rosterStats.positionRankingNumber[index]){
-          value += 1
-          team.rosterStats.positionRankingPosition[index] = value
+        if (team.rosterStats.positionRankingNumber[index]) {
+          value += 1;
+          team.rosterStats.positionRankingPosition[index] = value;
         }
-      })
+      });
     } catch (e) {
-      console.error(e)
+      console.error(e);
     }
-  })
-}
+  });
+};
 
-const determineOverallWeightedPlayerValue = (playerPositionId, playerLineupPositionId, playerValue) => {
-  if (playerLineupPositionId !== (20 || 21)){
-    if(playerPositionId === 1){
+const determineOverallWeightedPlayerValue = (
+  playerPositionId,
+  playerLineupPositionId,
+  playerValue,
+) => {
+  if (playerLineupPositionId !== (20 || 21)) {
+    if (playerPositionId === 1) {
       //QB
       return playerValue * 0.2;
-    } else if(playerPositionId === 2){
+    } else if (playerPositionId === 2) {
       //RB
       return playerValue * 0.4;
-    } else if(playerPositionId === 3){
+    } else if (playerPositionId === 3) {
       // WR
       return playerValue * 0.3;
-    } else if(playerPositionId === 4){
+    } else if (playerPositionId === 4) {
       // TE
       return playerValue * 0.1;
     }
   } else {
-    return 0
+    return 0;
   }
-}
+};
 
 // if the player is at 20 (bench) or 21 (IR) then exclude them
 // As of 5/2 there is no weight on each position since we are already removing the bench players
-const determineWeightedPlayerValue = (playerPositionId, playerLineupPositionId, playerPositionRanking) => {
-  return playerLineupPositionId !== (20 || 21) ? playerPositionRanking : 0
-}
+const determineWeightedPlayerValue = (
+  playerPositionId,
+  playerLineupPositionId,
+  playerPositionRanking,
+) => {
+  return playerLineupPositionId !== (20 || 21) ? playerPositionRanking : 0;
+};
 
 const createMatchups = (schedule) => {
   const teamSchedules = [];
-  schedule.forEach(matchup => {
-    const matchupPeriodId = matchup.matchupPeriodId
+  schedule.forEach((matchup) => {
+    const matchupPeriodId = matchup.matchupPeriodId;
 
     // determine all the points scored during each week
-    if (matchup.winner === "AWAY"){
+    if (matchup.winner === 'AWAY') {
       // away win
-      const awayTeamId = matchup.away.teamId
+      const awayTeamId = matchup.away.teamId;
       const awayWinData = {
-        wins: teamSchedules[awayTeamId] ? teamSchedules[awayTeamId][teamSchedules[awayTeamId].length - 1].wins + 1 : 1,
-        loses: teamSchedules[awayTeamId] ? teamSchedules[awayTeamId][teamSchedules[awayTeamId].length - 1].loses : 0,
+        wins: teamSchedules[awayTeamId]
+          ? teamSchedules[awayTeamId][teamSchedules[awayTeamId].length - 1].wins + 1
+          : 1,
+        loses: teamSchedules[awayTeamId]
+          ? teamSchedules[awayTeamId][teamSchedules[awayTeamId].length - 1].loses
+          : 0,
         won: true,
         points: matchup.away.totalPoints,
-        matchupPeriodId
-      }
-      if(teamSchedules[awayTeamId]){
-        teamSchedules[awayTeamId].push(awayWinData)
+        matchupPeriodId,
+      };
+      if (teamSchedules[awayTeamId]) {
+        teamSchedules[awayTeamId].push(awayWinData);
       } else {
-        teamSchedules[awayTeamId] = [awayWinData]
+        teamSchedules[awayTeamId] = [awayWinData];
       }
 
       // home loss
-      const homeTeamId = matchup.home.teamId
+      const homeTeamId = matchup.home.teamId;
       const homeLossData = {
-        wins: teamSchedules[homeTeamId] ? teamSchedules[homeTeamId][teamSchedules[homeTeamId].length - 1].wins : 0,
-        loses: teamSchedules[homeTeamId] ? teamSchedules[homeTeamId][teamSchedules[homeTeamId].length - 1].loses + 1 : 1,
+        wins: teamSchedules[homeTeamId]
+          ? teamSchedules[homeTeamId][teamSchedules[homeTeamId].length - 1].wins
+          : 0,
+        loses: teamSchedules[homeTeamId]
+          ? teamSchedules[homeTeamId][teamSchedules[homeTeamId].length - 1].loses + 1
+          : 1,
         won: false,
         points: matchup.home.totalPoints,
-        matchupPeriodId
-      }
-      if(teamSchedules[homeTeamId]){
-        teamSchedules[homeTeamId].push(homeLossData)
+        matchupPeriodId,
+      };
+      if (teamSchedules[homeTeamId]) {
+        teamSchedules[homeTeamId].push(homeLossData);
       } else {
-        teamSchedules[homeTeamId] = [homeLossData]
+        teamSchedules[homeTeamId] = [homeLossData];
       }
-    } else if (matchup.winner === "HOME") {
+    } else if (matchup.winner === 'HOME') {
       // away loss
-      const awayTeamId = matchup.away.teamId
+      const awayTeamId = matchup.away.teamId;
       const awayLossData = {
-        wins: teamSchedules[awayTeamId] ? teamSchedules[awayTeamId][teamSchedules[awayTeamId].length - 1].wins : 0,
-        loses: teamSchedules[awayTeamId] ? teamSchedules[awayTeamId][teamSchedules[awayTeamId].length - 1].loses + 1 : 1,
+        wins: teamSchedules[awayTeamId]
+          ? teamSchedules[awayTeamId][teamSchedules[awayTeamId].length - 1].wins
+          : 0,
+        loses: teamSchedules[awayTeamId]
+          ? teamSchedules[awayTeamId][teamSchedules[awayTeamId].length - 1].loses + 1
+          : 1,
         won: false,
         points: matchup.away.totalPoints,
-        matchupPeriodId
-      }
-      if(teamSchedules[awayTeamId]){
-        teamSchedules[awayTeamId].push(awayLossData)
+        matchupPeriodId,
+      };
+      if (teamSchedules[awayTeamId]) {
+        teamSchedules[awayTeamId].push(awayLossData);
       } else {
-        teamSchedules[awayTeamId] = [awayLossData]
+        teamSchedules[awayTeamId] = [awayLossData];
       }
 
       // home win
-      const homeTeamId = matchup.home.teamId
+      const homeTeamId = matchup.home.teamId;
       const homeWinData = {
-        wins: teamSchedules[homeTeamId] ? teamSchedules[homeTeamId][teamSchedules[homeTeamId].length - 1].wins + 1 : 1,
-        loses: teamSchedules[homeTeamId] ? teamSchedules[homeTeamId][teamSchedules[homeTeamId].length - 1].loses : 0,
+        wins: teamSchedules[homeTeamId]
+          ? teamSchedules[homeTeamId][teamSchedules[homeTeamId].length - 1].wins + 1
+          : 1,
+        loses: teamSchedules[homeTeamId]
+          ? teamSchedules[homeTeamId][teamSchedules[homeTeamId].length - 1].loses
+          : 0,
         won: true,
         points: matchup.home.totalPoints,
-        matchupPeriodId
-      }
-      if(teamSchedules[homeTeamId]){
-        teamSchedules[homeTeamId].push(homeWinData)
+        matchupPeriodId,
+      };
+      if (teamSchedules[homeTeamId]) {
+        teamSchedules[homeTeamId].push(homeWinData);
       } else {
-        teamSchedules[homeTeamId] = [homeWinData]
+        teamSchedules[homeTeamId] = [homeWinData];
       }
     }
-  })
+  });
 
-  return teamSchedules
-}
+  return teamSchedules;
+};
 
-
-export default espnDataMunger
+export default espnDataMunger;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import {
   BrowserRouter as Router,
   Switch,
@@ -7,8 +7,8 @@ import {
   Link,
   Redirect,
   useHistory,
-  useLocation
-} from "react-router-dom";
+  useLocation,
+} from 'react-router-dom';
 
 const PrivateRoute = ({ children, leagueId, ...rest }) => {
   return (
@@ -20,20 +20,20 @@ const PrivateRoute = ({ children, leagueId, ...rest }) => {
         ) : (
           <Redirect
             to={{
-              pathname: "/",
-              state: { from: location }
+              pathname: '/',
+              state: { from: location },
             }}
           />
         )
       }
     />
   );
-}
+};
 
 const mapStateToProps = (state) => {
   return {
     leagueId: state.leagueData.leagueId,
-  }
-}
+  };
+};
 
-export default connect(mapStateToProps)(PrivateRoute)
+export default connect(mapStateToProps)(PrivateRoute);
