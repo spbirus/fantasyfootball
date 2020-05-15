@@ -4,6 +4,7 @@ import {
   WEEKLY_OVL_WINS,
   WEEKLY_PPG,
   WEEKLY_RANK,
+  POWER_RANKINGS,
 } from '../actiontypes/powerRankingData';
 
 export const setWeeklyRecord = (weeklyRecord) => {
@@ -38,5 +39,12 @@ export const setWeeklyRank = (weeklyRank) => {
   return {
     type: WEEKLY_RANK,
     weeklyRank,
+  };
+};
+
+export const setPowerRankings = (powerRankings) => {
+  return {
+    type: POWER_RANKINGS,
+    powerRankings,
   };
 };

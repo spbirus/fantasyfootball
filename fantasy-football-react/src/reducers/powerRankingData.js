@@ -4,6 +4,7 @@ import {
   WEEKLY_OVL_WINS,
   WEEKLY_PPG,
   WEEKLY_RANK,
+  POWER_RANKINGS,
 } from '../actiontypes/powerRankingData';
 
 const initialState = {
@@ -12,6 +13,7 @@ const initialState = {
   weeklyOvlWins: [],
   weeklyPPG: [],
   weeklyRank: [],
+  powerRankings: [],
 };
 
 const powerRankingData = (state = initialState, action) => {
@@ -40,6 +42,11 @@ const powerRankingData = (state = initialState, action) => {
       return {
         ...state,
         weeklyRank: action.weeklyRank,
+      };
+    case POWER_RANKINGS:
+      return {
+        ...state,
+        powerRankings: action.powerRankings,
       };
     default:
       return state;

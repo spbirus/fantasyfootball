@@ -12,6 +12,7 @@ const createPowerRankings = async (
   setWeeklyOvlWins,
   setWeeklyPPG,
   setWeeklyRank,
+  setPowerRankings,
 ) => {
   const powerRankingsOverTime = [];
   const teamWeeklyRecord = [];
@@ -120,6 +121,7 @@ const createPowerRankings = async (
     });
   }
   createRelationalData(powerRankingsOverTime, weeksPlayed, true);
+  setPowerRankings(powerRankingsOverTime);
   return powerRankingsOverTime;
 };
 

@@ -11,6 +11,7 @@ import {
   setWeeklyOvlWins,
   setWeeklyPPG,
   setWeeklyRank,
+  setPowerRankings,
 } from '../actions/powerRankingData';
 
 const useStyles = makeStyles({
@@ -49,6 +50,7 @@ const PowerRankings = ({
   setWeeklyOvlWins,
   setWeeklyPPG,
   setWeeklyRank,
+  setPowerRankings,
 }) => {
   const classes = useStyles();
   const [rankings, setRankings] = useState(null);
@@ -64,6 +66,7 @@ const PowerRankings = ({
       setWeeklyOvlWins,
       setWeeklyPPG,
       setWeeklyRank,
+      setPowerRankings,
     );
     const datasets = [];
     teamRankings.forEach((teamRank) => {
@@ -144,6 +147,7 @@ const mapDispatchToProps = (dispatch) => {
     setWeeklyOvlWins: (weeklyOvlWins) => dispatch(setWeeklyOvlWins(weeklyOvlWins)),
     setWeeklyPPG: (weeklyPPG) => dispatch(setWeeklyPPG(weeklyPPG)),
     setWeeklyRank: (weeklyRank) => dispatch(setWeeklyRank(weeklyRank)),
+    setPowerRankings: (powerRankings) => dispatch(setPowerRankings(powerRankings)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(PowerRankings);
