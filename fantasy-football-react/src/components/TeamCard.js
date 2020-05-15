@@ -1,9 +1,7 @@
-
-import React from "react";
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { CardContent, Card, Typography, Grid } from "@material-ui/core";
-import Roster from "./Roster";
-
+import { CardContent, Card, Typography, Grid } from '@material-ui/core';
+import Roster from './Roster';
 
 const useStyles = makeStyles({
   root: {
@@ -15,7 +13,7 @@ const useStyles = makeStyles({
     transform: 'scale(0.8)',
   },
   title: {
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 20,
   },
   pos: {
@@ -23,9 +21,9 @@ const useStyles = makeStyles({
   },
 });
 
-const TeamCard = ({teamLocation, teamNickname, roster, abbreviation, logoURL}) => {
+const TeamCard = ({ teamLocation, teamNickname, roster, abbreviation, logoURL }) => {
   const classes = useStyles();
-  
+
   return (
     <Grid item xs>
       <div>
@@ -39,7 +37,7 @@ const TeamCard = ({teamLocation, teamNickname, roster, abbreviation, logoURL}) =
         </Card>
       </div>
     </Grid>
-  )
-}
+  );
+};
 
 export default TeamCard;

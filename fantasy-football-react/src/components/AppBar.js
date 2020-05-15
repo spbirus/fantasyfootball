@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import clsx from 'clsx';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    height: "35px"
+    height: '35px',
   },
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
@@ -24,27 +24,29 @@ const useStyles = makeStyles((theme) => ({
     }),
   },
   button: {
-    width: "10px",
-    float: "left",
-    color: "white"
+    width: '10px',
+    float: 'left',
+    color: 'white',
   },
 }));
 
-const AppBarReact = ({toggleDrawer, isDrawerOpen}) => {
+const AppBarReact = ({ toggleDrawer, isDrawerOpen }) => {
   const classes = useStyles();
-  
+
   return (
     <div>
-      <AppBar 
+      <AppBar
         position="fixed"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: isDrawerOpen,
         })}
       >
-        <Button onClick={toggleDrawer(true)} className={classes.button}><MenuIcon /> </Button>
+        <Button onClick={toggleDrawer(true)} className={classes.button}>
+          <MenuIcon />{' '}
+        </Button>
       </AppBar>
-  </div>
-  )
-}
+    </div>
+  );
+};
 
 export default AppBarReact;
