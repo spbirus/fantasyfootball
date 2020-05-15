@@ -51,23 +51,29 @@ const PowerRankings = ({
   setWeeklyPPG,
   setWeeklyRank,
   setPowerRankings,
+  powerRankings,
 }) => {
   const classes = useStyles();
   const [rankings, setRankings] = useState(null);
 
   const createPower = useCallback(async () => {
-    const teamRankings = await createPowerRankings(
-      leagueTeams,
-      leagueMatchups,
-      leagueId,
-      leagueYear,
-      setWeeklyRecord,
-      setWeeklyCons,
-      setWeeklyOvlWins,
-      setWeeklyPPG,
-      setWeeklyRank,
-      setPowerRankings,
-    );
+    let teamRankings = [];
+    if (!powerRankings) {
+      teamRankings = await createPowerRankings(
+        leagueTeams,
+        leagueMatchups,
+        leagueId,
+        leagueYear,
+        setWeeklyRecord,
+        setWeeklyCons,
+        setWeeklyOvlWins,
+        setWeeklyPPG,
+        setWeeklyRank,
+        setPowerRankings,
+      );
+    } else {
+      teamRankings = powerRankings;
+    }
     const datasets = [];
     teamRankings.forEach((teamRank) => {
       const data = teamRank.data.map((item) => item.position);
@@ -81,16 +87,16 @@ const PowerRankings = ({
         data,
       });
     });
-    const labels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 12, 13, 14, 15, 16];
+    const labels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
     setRankings({
       labels,
       datasets,
     });
-  }, []);
+  }, [leagueTeams, leagueMatchups, leagueId, leagueYear, powerRankings]);
 
   useEffect(() => {
     createPower();
-  }, [leagueTeams, leagueMatchups, leagueId, leagueYear]);
+  }, [leagueTeams, leagueMatchups, leagueId, leagueYear, powerRankings]);
 
   return (
     <div>
@@ -137,6 +143,7 @@ const mapStateToProps = (state) => {
     leagueMatchups: state.leagueData.leagueMatchups,
     leagueId: state.leagueData.leagueId,
     leagueYear: state.leagueData.leagueYear,
+    powerRankings: state.powerRankingData.powerRankings,
   };
 };
 

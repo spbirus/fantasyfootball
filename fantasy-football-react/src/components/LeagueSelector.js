@@ -14,6 +14,15 @@ import { compose } from 'redux';
 import { getAllESPNData, getESPNLeagueInfo } from '../api/espnFantasyFootballapi';
 import espnDataMunger from '../mungers/mungey';
 import { useTracking, track } from 'react-tracking';
+import {
+  setWeeklyRecord,
+  setWeeklyCons,
+  setWeeklyOvlWins,
+  setWeeklyPPG,
+  setWeeklyRank,
+  setPowerRankings,
+} from '../actions/powerRankingData';
+import createPowerRankings from '../utils/createPowerRankings';
 
 const useStyles = makeStyles({
   card: {
@@ -34,6 +43,12 @@ const LeagueSelector = ({
   setLeagueTeams,
   setLeagueName,
   setLeagueMatchups,
+  setWeeklyRecord,
+  setWeeklyCons,
+  setWeeklyOvlWins,
+  setWeeklyPPG,
+  setWeeklyRank,
+  setPowerRankings,
 }) => {
   const classes = useStyles();
   const history = useHistory();
@@ -75,6 +90,20 @@ const LeagueSelector = ({
         leagueYear: leagueYearState,
       });
 
+      // create power rankings
+      await createPowerRankings(
+        munge.teams,
+        munge.matchups,
+        parseInt(leagueIdState),
+        parseInt(leagueYearState),
+        setWeeklyRecord,
+        setWeeklyCons,
+        setWeeklyOvlWins,
+        setWeeklyPPG,
+        setWeeklyRank,
+        setPowerRankings,
+      );
+
       history.push('/dashboard');
     } catch (e) {
       alert('No league/season data found');
@@ -103,6 +132,12 @@ const mapDispatchToProps = (dispatch) => {
     setLeagueTeams: (leagueTeams) => dispatch(setLeagueTeams(leagueTeams)),
     setLeagueName: (leagueName) => dispatch(setLeagueName(leagueName)),
     setLeagueMatchups: (leagueMatchups) => dispatch(setLeagueMatchups(leagueMatchups)),
+    setWeeklyRecord: (weeklyRecord) => dispatch(setWeeklyRecord(weeklyRecord)),
+    setWeeklyCons: (weeklyCons) => dispatch(setWeeklyCons(weeklyCons)),
+    setWeeklyOvlWins: (weeklyOvlWins) => dispatch(setWeeklyOvlWins(weeklyOvlWins)),
+    setWeeklyPPG: (weeklyPPG) => dispatch(setWeeklyPPG(weeklyPPG)),
+    setWeeklyRank: (weeklyRank) => dispatch(setWeeklyRank(weeklyRank)),
+    setPowerRankings: (powerRankings) => dispatch(setPowerRankings(powerRankings)),
   };
 };
 

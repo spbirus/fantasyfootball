@@ -18,6 +18,15 @@ import { getAllESPNData, getESPNLeagueInfo } from '../api/espnFantasyFootballapi
 import espnDataMunger from '../mungers/mungey';
 import { useTracking, track } from 'react-tracking';
 import pjson from '../../package.json';
+import {
+  setWeeklyRecord,
+  setWeeklyCons,
+  setWeeklyOvlWins,
+  setWeeklyPPG,
+  setWeeklyRank,
+  setPowerRankings,
+} from '../actions/powerRankingData';
+import createPowerRankings from '../utils/createPowerRankings';
 
 const useStyles = makeStyles({
   drawer: {
@@ -75,6 +84,12 @@ const DrawerReact = ({
   setLeagueName,
   setLeagueWeek,
   setLeagueMatchups,
+  setWeeklyRecord,
+  setWeeklyCons,
+  setWeeklyOvlWins,
+  setWeeklyPPG,
+  setWeeklyRank,
+  setPowerRankings,
 }) => {
   const classes = useStyles();
   const history = useHistory();
@@ -122,7 +137,19 @@ const DrawerReact = ({
         leagueYear: leagueYearState,
       });
 
-      history.push('/dashboard');
+      // create power rankings
+      await createPowerRankings(
+        munge.teams,
+        munge.matchups,
+        parseInt(leagueIdState),
+        parseInt(leagueYearState),
+        setWeeklyRecord,
+        setWeeklyCons,
+        setWeeklyOvlWins,
+        setWeeklyPPG,
+        setWeeklyRank,
+        setPowerRankings,
+      );
     } catch (e) {
       alert('No league/season data found');
       console.error('No league/season data found', e);
@@ -179,6 +206,12 @@ const mapDispatchToProps = (dispatch) => {
     setLeagueWeek: (leagueWeek) => dispatch(setLeagueWeek(leagueWeek)),
     setLeagueName: (leagueName) => dispatch(setLeagueName(leagueName)),
     setLeagueMatchups: (leagueMatchups) => dispatch(setLeagueMatchups(leagueMatchups)),
+    setWeeklyRecord: (weeklyRecord) => dispatch(setWeeklyRecord(weeklyRecord)),
+    setWeeklyCons: (weeklyCons) => dispatch(setWeeklyCons(weeklyCons)),
+    setWeeklyOvlWins: (weeklyOvlWins) => dispatch(setWeeklyOvlWins(weeklyOvlWins)),
+    setWeeklyPPG: (weeklyPPG) => dispatch(setWeeklyPPG(weeklyPPG)),
+    setWeeklyRank: (weeklyRank) => dispatch(setWeeklyRank(weeklyRank)),
+    setPowerRankings: (powerRankings) => dispatch(setPowerRankings(powerRankings)),
   };
 };
 

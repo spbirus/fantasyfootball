@@ -13,7 +13,7 @@ const initialState = {
   weeklyOvlWins: [],
   weeklyPPG: [],
   weeklyRank: [],
-  powerRankings: [],
+  powerRankings: undefined,
 };
 
 const powerRankingData = (state = initialState, action) => {
