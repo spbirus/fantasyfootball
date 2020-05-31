@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { times } from 'lodash';
 import { TextField, makeStyles, Button } from '@material-ui/core';
 import { connect } from 'react-redux';
 import {
@@ -11,8 +12,13 @@ import {
 } from '../actions/leagueData';
 import { useHistory, withRouter } from 'react-router-dom';
 import { compose } from 'redux';
-import { getAllESPNData, getESPNLeagueInfo } from '../api/espnFantasyFootballapi';
+import {
+  getAllESPNData,
+  getESPNLeagueInfo,
+  getESPNPlayerStats,
+} from '../api/espnFantasyFootballapi';
 import espnDataMunger from '../mungers/mungey';
+import espnPlayerMunger from '../mungers/playerMungey';
 import { useTracking, track } from 'react-tracking';
 import {
   setWeeklyRecord,
@@ -22,6 +28,7 @@ import {
   setWeeklyRank,
   setPowerRankings,
 } from '../actions/powerRankingData';
+import { setPlayerStats } from '../actions/playerData';
 import createPowerRankings from '../utils/createPowerRankings';
 
 const useStyles = makeStyles({
@@ -49,6 +56,7 @@ const LeagueSelector = ({
   setWeeklyPPG,
   setWeeklyRank,
   setPowerRankings,
+  setPlayerStats,
 }) => {
   const classes = useStyles();
   const history = useHistory();
@@ -66,6 +74,7 @@ const LeagueSelector = ({
 
   const getTeams = async () => {
     try {
+      // get basic roster/league data
       const response = await getAllESPNData({
         leagueID: parseInt(leagueIdState),
         leagueYear: parseInt(leagueYearState),
@@ -89,6 +98,19 @@ const LeagueSelector = ({
         leagueID: leagueIdState,
         leagueYear: leagueYearState,
       });
+
+      // get player stats
+      const playerStats = [];
+      for (const week of times(17)) {
+        const response = await getESPNPlayerStats({
+          leagueID: parseInt(leagueIdState),
+          leagueYear: parseInt(leagueYearState),
+          scoringPeriod: week + 1,
+        });
+        playerStats.push(response);
+      }
+      const playerMunge = espnPlayerMunger(playerStats);
+      setPlayerStats(playerMunge);
 
       // create power rankings
       await createPowerRankings(
@@ -138,6 +160,7 @@ const mapDispatchToProps = (dispatch) => {
     setWeeklyPPG: (weeklyPPG) => dispatch(setWeeklyPPG(weeklyPPG)),
     setWeeklyRank: (weeklyRank) => dispatch(setWeeklyRank(weeklyRank)),
     setPowerRankings: (powerRankings) => dispatch(setPowerRankings(powerRankings)),
+    setPlayerStats: (playerStats) => dispatch(setPlayerStats(playerStats)),
   };
 };
 

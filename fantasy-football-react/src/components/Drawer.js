@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { times } from 'lodash';
 import Drawer from '@material-ui/core/Drawer';
 import { Typography, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { PeopleRounded, ShowChartRounded, MultilineChartRounded } from '@material-ui/icons';
@@ -14,7 +15,11 @@ import {
   setLeagueMatchups,
 } from '../actions/leagueData';
 import { useHistory } from 'react-router-dom';
-import { getAllESPNData, getESPNLeagueInfo } from '../api/espnFantasyFootballapi';
+import {
+  getAllESPNData,
+  getESPNLeagueInfo,
+  getESPNPlayerStats,
+} from '../api/espnFantasyFootballapi';
 import espnDataMunger from '../mungers/mungey';
 import { useTracking, track } from 'react-tracking';
 import pjson from '../../package.json';
@@ -26,6 +31,8 @@ import {
   setWeeklyRank,
   setPowerRankings,
 } from '../actions/powerRankingData';
+import { setPlayerStats } from '../actions/playerData';
+import espnPlayerMunger from '../mungers/playerMungey';
 import createPowerRankings from '../utils/createPowerRankings';
 
 const useStyles = makeStyles({
@@ -90,6 +97,7 @@ const DrawerReact = ({
   setWeeklyPPG,
   setWeeklyRank,
   setPowerRankings,
+  setPlayerStats,
 }) => {
   const classes = useStyles();
   const history = useHistory();
@@ -112,6 +120,7 @@ const DrawerReact = ({
 
   const getTeams = async () => {
     try {
+      // get basic roster/league data
       const response = await getAllESPNData({
         leagueID: parseInt(leagueIdState),
         leagueYear: parseInt(leagueYearState),
@@ -136,6 +145,19 @@ const DrawerReact = ({
         leagueID: leagueIdState,
         leagueYear: leagueYearState,
       });
+
+      // get player stats
+      const playerStats = [];
+      for (const week of times(17)) {
+        const response = await getESPNPlayerStats({
+          leagueID: parseInt(leagueIdState),
+          leagueYear: parseInt(leagueYearState),
+          scoringPeriod: week + 1,
+        });
+        playerStats.push(response);
+      }
+      const playerMunge = espnPlayerMunger(playerStats);
+      setPlayerStats(playerMunge);
 
       // create power rankings
       await createPowerRankings(
@@ -212,6 +234,7 @@ const mapDispatchToProps = (dispatch) => {
     setWeeklyPPG: (weeklyPPG) => dispatch(setWeeklyPPG(weeklyPPG)),
     setWeeklyRank: (weeklyRank) => dispatch(setWeeklyRank(weeklyRank)),
     setPowerRankings: (powerRankings) => dispatch(setPowerRankings(powerRankings)),
+    setPlayerStats: (playerStats) => dispatch(setPlayerStats(playerStats)),
   };
 };
 

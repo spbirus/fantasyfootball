@@ -1,0 +1,1 @@
+export const SET_PLAYER_STATS = 'SET_PLAYER_STATS';

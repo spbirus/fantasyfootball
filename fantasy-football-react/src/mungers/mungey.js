@@ -75,7 +75,6 @@ const createRosterStatsHardData = (roster) => {
       const playerPositionId = player.playerPoolEntry.player.defaultPositionId;
       const playerPositionRanking = player.playerPoolEntry.ratings[0].positionalRanking;
       const playerLineupPositionId = player.lineupSlotId;
-      const playerOverallRanking = player.playerPoolEntry.ratings[0].totalRanking;
 
       // total the overall rankings
       // only rank the starters

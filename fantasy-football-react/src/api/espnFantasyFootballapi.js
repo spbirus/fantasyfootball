@@ -23,3 +23,11 @@ export const getESPNLeagueInfo = async ({ leagueID, leagueYear }) => {
   const allData = res.data;
   return allData;
 };
+
+export const getESPNPlayerStats = async ({ leagueID, leagueYear, scoringPeriod }) => {
+  const res = await axios.get(
+    `https://fantasy.espn.com/apis/v3/games/ffl/seasons/${leagueYear}/segments/0/leagues/${leagueID}?scoringPeriodId=${scoringPeriod}&view=kona_player_info`,
+  );
+  const playerData = res.data;
+  return playerData;
+};
