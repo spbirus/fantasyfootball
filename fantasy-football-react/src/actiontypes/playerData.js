@@ -1,1 +1,2 @@
 export const SET_PLAYER_STATS = 'SET_PLAYER_STATS';
+export const SET_PLAYERS = 'SET_PLAYERS';

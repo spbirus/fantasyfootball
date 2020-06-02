@@ -3,14 +3,15 @@ import { find } from 'lodash';
 
 const espnPlayerMunger = (data) => {
   const seasonStats = [];
+  const leaguePlayers = [];
   data.map((weekStats) => {
-    seasonStats.push(createLeagueWideWeekStats(weekStats.players));
+    seasonStats.push(createLeagueWideWeekStats(weekStats.players, leaguePlayers));
   });
 
-  return seasonStats;
+  return { seasonStats, leaguePlayers };
 };
 
-const createLeagueWideWeekStats = (players) => {
+const createLeagueWideWeekStats = (players, leaguePlayers) => {
   const leagueWideWeekStats = {};
   players.forEach((player) => {
     const playerStats = {
@@ -20,6 +21,9 @@ const createLeagueWideWeekStats = (players) => {
       projectedStats: getStats(player.player.stats, projectedStats),
     };
     leagueWideWeekStats[player.id] = playerStats;
+    if (!leaguePlayers.some((item) => item.id === player.id)) {
+      leaguePlayers.push({ id: player.id, name: player.player.fullName });
+    }
   });
 
   return leagueWideWeekStats;

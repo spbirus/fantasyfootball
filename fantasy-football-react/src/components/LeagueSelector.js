@@ -28,7 +28,7 @@ import {
   setWeeklyRank,
   setPowerRankings,
 } from '../actions/powerRankingData';
-import { setPlayerStats } from '../actions/playerData';
+import { setPlayerStats, setPlayers } from '../actions/playerData';
 import createPowerRankings from '../utils/createPowerRankings';
 
 const useStyles = makeStyles({
@@ -57,6 +57,7 @@ const LeagueSelector = ({
   setWeeklyRank,
   setPowerRankings,
   setPlayerStats,
+  setPlayers,
 }) => {
   const classes = useStyles();
   const history = useHistory();
@@ -110,7 +111,8 @@ const LeagueSelector = ({
         playerStats.push(response);
       }
       const playerMunge = espnPlayerMunger(playerStats);
-      setPlayerStats(playerMunge);
+      setPlayerStats(playerMunge.seasonStats);
+      setPlayers(playerMunge.leaguePlayers);
 
       // create power rankings
       await createPowerRankings(
@@ -161,6 +163,7 @@ const mapDispatchToProps = (dispatch) => {
     setWeeklyRank: (weeklyRank) => dispatch(setWeeklyRank(weeklyRank)),
     setPowerRankings: (powerRankings) => dispatch(setPowerRankings(powerRankings)),
     setPlayerStats: (playerStats) => dispatch(setPlayerStats(playerStats)),
+    setPlayers: (players) => dispatch(setPlayers(players)),
   };
 };
 

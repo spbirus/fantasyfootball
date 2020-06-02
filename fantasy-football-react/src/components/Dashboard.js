@@ -6,6 +6,7 @@ import HistoricalRoster from './HistoricalRoster';
 import { withRouter } from 'react-router-dom';
 import RosterRankings from './RosterRankings';
 import PowerRankings from './PowerRankings';
+import PlayerComparison from './PlayerComparison';
 
 const Dashboard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -35,6 +36,7 @@ const Dashboard = () => {
         {openPage === 'depthRankings' && <HistoricalRoster />}
         {openPage === 'rosterRankings' && <RosterRankings />}
         {openPage === 'powerRankings' && <PowerRankings />}
+        {openPage === 'playerComparison' && <PlayerComparison />}
       </div>
     </div>
   );

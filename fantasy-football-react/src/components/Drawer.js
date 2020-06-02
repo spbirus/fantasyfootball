@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { times } from 'lodash';
 import Drawer from '@material-ui/core/Drawer';
 import { Typography, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import { PeopleRounded, ShowChartRounded, MultilineChartRounded } from '@material-ui/icons';
+import {
+  PeopleRounded,
+  ShowChartRounded,
+  MultilineChartRounded,
+  CompareArrowsRounded,
+} from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { TextField, makeStyles, Button } from '@material-ui/core';
 import {
@@ -31,7 +36,7 @@ import {
   setWeeklyRank,
   setPowerRankings,
 } from '../actions/powerRankingData';
-import { setPlayerStats } from '../actions/playerData';
+import { setPlayerStats, setPlayers } from '../actions/playerData';
 import espnPlayerMunger from '../mungers/playerMungey';
 import createPowerRankings from '../utils/createPowerRankings';
 
@@ -74,6 +79,11 @@ const items = [
     id: 'powerRankings',
     icon: <MultilineChartRounded />,
   },
+  {
+    name: 'Player Comparison',
+    id: 'playerComparison',
+    icon: <CompareArrowsRounded />,
+  },
 ];
 
 const DrawerReact = ({
@@ -98,6 +108,7 @@ const DrawerReact = ({
   setWeeklyRank,
   setPowerRankings,
   setPlayerStats,
+  setPlayers,
 }) => {
   const classes = useStyles();
   const history = useHistory();
@@ -157,7 +168,8 @@ const DrawerReact = ({
         playerStats.push(response);
       }
       const playerMunge = espnPlayerMunger(playerStats);
-      setPlayerStats(playerMunge);
+      setPlayerStats(playerMunge.seasonStats);
+      setPlayers(playerMunge.leaguePlayers);
 
       // create power rankings
       await createPowerRankings(
@@ -235,6 +247,7 @@ const mapDispatchToProps = (dispatch) => {
     setWeeklyRank: (weeklyRank) => dispatch(setWeeklyRank(weeklyRank)),
     setPowerRankings: (powerRankings) => dispatch(setPowerRankings(powerRankings)),
     setPlayerStats: (playerStats) => dispatch(setPlayerStats(playerStats)),
+    setPlayers: (players) => dispatch(setPlayers(players)),
   };
 };
 
