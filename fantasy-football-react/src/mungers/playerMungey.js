@@ -17,6 +17,11 @@ const createLeagueWideWeekStats = (players, leaguePlayers) => {
     const playerStats = {
       id: player.id,
       fullName: player.player.fullName,
+      playerPositionRank: player.ratings ? player.ratings[0].positionalRanking : null,
+      playerTotalRanking: player.ratings ? player.ratings[0].totalRanking : null,
+      isQB: player.player.eligibleSlots.includes(0),
+      isRB: player.player.eligibleSlots.includes(2),
+      isWR: player.player.eligibleSlots.includes(4),
       actualStats: getStats(player.player.stats, actualStats),
       projectedStats: getStats(player.player.stats, projectedStats),
     };

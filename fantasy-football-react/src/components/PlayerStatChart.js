@@ -34,7 +34,7 @@ const PlayerStatChart = ({ players, playerStats }) => {
       const actualStatsPerWeek = [];
       const projStatsPerWeek = [];
       playerStats.forEach((weekStats) => {
-        const weeklyStats = find(weekStats, { id: player.id });
+        const weeklyStats = find(weekStats, { id: player?.id }, null);
         actualStatsPerWeek.push(
           weeklyStats?.actualStats?.appliedTotal ? weeklyStats?.actualStats?.appliedTotal : 0,
         );
@@ -44,7 +44,7 @@ const PlayerStatChart = ({ players, playerStats }) => {
       });
 
       datasets.push({
-        label: `${player.name} Actual Points`,
+        label: player?.name ? `${player.name} Actual Points` : `Player ${idx + 1} Actual Points`,
         fill: false,
         lineTension: 0,
         backgroundColor: colors[idx].actual,
@@ -53,7 +53,9 @@ const PlayerStatChart = ({ players, playerStats }) => {
         data: actualStatsPerWeek,
       });
       datasets.push({
-        label: `${player.name} Projected Points`,
+        label: player?.name
+          ? `${player.name} Projected Points`
+          : `Player ${idx + 1} Projected Points`,
         fill: false,
         lineTension: 0,
         backgroundColor: colors[idx].projected,

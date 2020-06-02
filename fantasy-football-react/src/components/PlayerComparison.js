@@ -8,10 +8,13 @@ import PlayerStatChart from './PlayerStatChart';
 const useStyles = makeStyles({
   root: {
     paddingTop: '15px',
+    margin: '15px',
   },
-  playerOne: {
-    width: '50%',
-    margin: 'auto',
+  autocompleteDiv: {
+    display: 'inline-flex',
+  },
+  playerSelector: {
+    padding: '5px',
   },
 });
 
@@ -22,7 +25,7 @@ const PlayerComparison = ({ players }) => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.playerOne}>
+      <div className={classes.autocompleteDiv}>
         <Autocomplete
           id="combo-box1"
           value={playerOne}
@@ -33,6 +36,7 @@ const PlayerComparison = ({ players }) => {
           getOptionLabel={(option) => option.name}
           style={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label="Player One" variant="outlined" />}
+          className={classes.playerSelector}
         />
         <Autocomplete
           id="combo-box2"
@@ -44,9 +48,10 @@ const PlayerComparison = ({ players }) => {
           getOptionLabel={(option) => option.name}
           style={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label="Player Two" variant="outlined" />}
+          className={classes.playerSelector}
         />
-        <PlayerStatChart players={[playerOne, playerTwo]} />
       </div>
+      <PlayerStatChart players={[playerOne, playerTwo]} />
     </div>
   );
 };
