@@ -30,6 +30,7 @@ import {
 } from '../actions/powerRankingData';
 import { setPlayerStats, setPlayers } from '../actions/playerData';
 import createPowerRankings from '../utils/createPowerRankings';
+import ActivityButton from './form/ActivityButton';
 
 const useStyles = makeStyles({
   card: {
@@ -64,6 +65,7 @@ const LeagueSelector = ({
   const tracking = useTracking();
   const [leagueIdState, setLeagueIdState] = useState('40974493');
   const [leagueYearState, setLeagueYearState] = useState('2020');
+  const [isLoadingData, setIsLoadingData] = useState(false);
 
   const changeLeagueId = (event) => {
     setLeagueIdState(event.target.value);
@@ -74,6 +76,7 @@ const LeagueSelector = ({
   };
 
   const getTeams = async () => {
+    setIsLoadingData(true);
     try {
       // get basic roster/league data
       const response = await getAllESPNData({
@@ -132,6 +135,8 @@ const LeagueSelector = ({
     } catch (e) {
       alert('No league/season data found');
       console.error('No league/season data found', e);
+    } finally {
+      setIsLoadingData(false);
     }
   };
 
@@ -141,7 +146,10 @@ const LeagueSelector = ({
         <form>
           <TextField value={leagueIdState} onChange={changeLeagueId} label="League ID" />
           <TextField value={leagueYearState} onChange={changeLeagueYear} label="Year" />
-          <Button onClick={getTeams}>Submit</Button>
+          <ActivityButton onClick={getTeams} isActive={isLoadingData}>
+            Submit
+          </ActivityButton>
+          {/* <Button onClick={getTeams}>Submit</Button> */}
         </form>
       </div>
     </div>

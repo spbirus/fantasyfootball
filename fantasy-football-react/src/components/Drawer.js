@@ -39,6 +39,7 @@ import {
 import { setPlayerStats, setPlayers } from '../actions/playerData';
 import espnPlayerMunger from '../mungers/playerMungey';
 import createPowerRankings from '../utils/createPowerRankings';
+import ActivityButton from './form/ActivityButton';
 
 const useStyles = makeStyles({
   drawer: {
@@ -116,6 +117,7 @@ const DrawerReact = ({
   const [leagueIdState, setLeagueIdState] = useState(leagueId.toString());
   const [leagueYearState, setLeagueYearState] = useState(leagueYear.toString());
   const [leagueWeekState, setLeagueWeekState] = useState(leagueWeek.toString());
+  const [isLoadingData, setIsLoadingData] = useState(false);
 
   const changeLeagueId = (event) => {
     setLeagueIdState(event.target.value);
@@ -130,6 +132,7 @@ const DrawerReact = ({
   };
 
   const getTeams = async () => {
+    setIsLoadingData(true);
     try {
       // get basic roster/league data
       const response = await getAllESPNData({
@@ -187,6 +190,8 @@ const DrawerReact = ({
     } catch (e) {
       alert('No league/season data found');
       console.error('No league/season data found', e);
+    } finally {
+      setIsLoadingData(false);
     }
   };
 
@@ -202,7 +207,9 @@ const DrawerReact = ({
               <TextField value={leagueIdState} onChange={changeLeagueId} label="League ID" />
               <TextField value={leagueYearState} onChange={changeLeagueYear} label="Year" />
               <TextField value={leagueWeekState} onChange={changeLeagueWeek} label="Week" />
-              <Button onClick={getTeams}>Submit</Button>
+              <ActivityButton onClick={getTeams} isActive={isLoadingData}>
+                Submit
+              </ActivityButton>
             </form>
           </div>
           <div>
