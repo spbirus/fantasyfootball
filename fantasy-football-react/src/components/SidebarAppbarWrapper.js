@@ -15,8 +15,8 @@ const SidebarAppbarWrapper = ({ children }) => {
     setIsDrawerOpen(open);
   };
 
-  const clickDrawerItem = (id) => {
-    history.push(`/${id}`);
+  const clickDrawerItem = (route) => {
+    history.push(`/${route}`);
     setIsDrawerOpen(false);
   };
 

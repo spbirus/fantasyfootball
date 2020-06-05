@@ -34,6 +34,7 @@ import espnPlayerMunger from '../mungers/playerMungey';
 import createPowerRankings from '../utils/createPowerRankings';
 import ActivityButton from './form/ActivityButton';
 import { toolOptions } from '../constants/toolOptions';
+import { BugReportRounded } from '@material-ui/icons';
 
 const useStyles = makeStyles({
   drawer: {
@@ -190,6 +191,17 @@ const DrawerReact = ({
                   <ListItemText primary={item.name} />
                 </ListItem>
               ))}
+
+              <ListItem
+                button
+                key={'bugreporter'}
+                onClick={() => (window.location.href = 'https://forms.gle/r9xCnhTuYKj2mDUh6')}
+              >
+                <ListItemIcon>
+                  <BugReportRounded />
+                </ListItemIcon>
+                <ListItemText primary="Bug Reporting and Feature Requests" />
+              </ListItem>
             </List>
           </div>
           <div className={classes.version}>{pjson.version}</div>
