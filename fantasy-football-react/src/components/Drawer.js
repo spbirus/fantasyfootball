@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { times } from 'lodash';
 import Drawer from '@material-ui/core/Drawer';
 import { Typography, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import { PeopleRounded, ShowChartRounded, MultilineChartRounded } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { TextField, makeStyles, Button } from '@material-ui/core';
 import {
@@ -13,8 +13,11 @@ import {
   setLeagueWeek,
   setLeagueMatchups,
 } from '../actions/leagueData';
-import { useHistory } from 'react-router-dom';
-import { getAllESPNData, getESPNLeagueInfo } from '../api/espnFantasyFootballapi';
+import {
+  getAllESPNData,
+  getESPNLeagueInfo,
+  getESPNPlayerStats,
+} from '../api/espnFantasyFootballapi';
 import espnDataMunger from '../mungers/mungey';
 import { useTracking, track } from 'react-tracking';
 import pjson from '../../package.json';
@@ -26,7 +29,12 @@ import {
   setWeeklyRank,
   setPowerRankings,
 } from '../actions/powerRankingData';
+import { setPlayerStats, setPlayers } from '../actions/playerData';
+import espnPlayerMunger from '../mungers/playerMungey';
 import createPowerRankings from '../utils/createPowerRankings';
+import ActivityButton from './form/ActivityButton';
+import { toolOptions } from '../constants/toolOptions';
+import { BugReportRounded } from '@material-ui/icons';
 
 const useStyles = makeStyles({
   drawer: {
@@ -51,24 +59,6 @@ const useStyles = makeStyles({
   },
 });
 
-const items = [
-  {
-    name: 'Depth Chart',
-    id: 'depthRankings',
-    icon: <PeopleRounded />,
-  },
-  {
-    name: 'Roster Rankings',
-    id: 'rosterRankings',
-    icon: <ShowChartRounded />,
-  },
-  {
-    name: 'Power Rankings',
-    id: 'powerRankings',
-    icon: <MultilineChartRounded />,
-  },
-];
-
 const DrawerReact = ({
   isDrawerOpen,
   toggleDrawer,
@@ -90,13 +80,15 @@ const DrawerReact = ({
   setWeeklyPPG,
   setWeeklyRank,
   setPowerRankings,
+  setPlayerStats,
+  setPlayers,
 }) => {
   const classes = useStyles();
-  const history = useHistory();
   const tracking = useTracking();
   const [leagueIdState, setLeagueIdState] = useState(leagueId.toString());
   const [leagueYearState, setLeagueYearState] = useState(leagueYear.toString());
   const [leagueWeekState, setLeagueWeekState] = useState(leagueWeek.toString());
+  const [isLoadingData, setIsLoadingData] = useState(false);
 
   const changeLeagueId = (event) => {
     setLeagueIdState(event.target.value);
@@ -111,7 +103,9 @@ const DrawerReact = ({
   };
 
   const getTeams = async () => {
+    setIsLoadingData(true);
     try {
+      // get basic roster/league data
       const response = await getAllESPNData({
         leagueID: parseInt(leagueIdState),
         leagueYear: parseInt(leagueYearState),
@@ -137,6 +131,20 @@ const DrawerReact = ({
         leagueYear: leagueYearState,
       });
 
+      // get player stats
+      const playerStats = [];
+      for (const week of times(17)) {
+        const response = await getESPNPlayerStats({
+          leagueID: parseInt(leagueIdState),
+          leagueYear: parseInt(leagueYearState),
+          scoringPeriod: week + 1,
+        });
+        playerStats.push(response);
+      }
+      const playerMunge = espnPlayerMunger(playerStats);
+      setPlayerStats(playerMunge.seasonStats);
+      setPlayers(playerMunge.leaguePlayers);
+
       // create power rankings
       await createPowerRankings(
         munge.teams,
@@ -153,6 +161,8 @@ const DrawerReact = ({
     } catch (e) {
       alert('No league/season data found');
       console.error('No league/season data found', e);
+    } finally {
+      setIsLoadingData(false);
     }
   };
 
@@ -168,17 +178,30 @@ const DrawerReact = ({
               <TextField value={leagueIdState} onChange={changeLeagueId} label="League ID" />
               <TextField value={leagueYearState} onChange={changeLeagueYear} label="Year" />
               <TextField value={leagueWeekState} onChange={changeLeagueWeek} label="Week" />
-              <Button onClick={getTeams}>Submit</Button>
+              <ActivityButton onClick={getTeams} isActive={isLoadingData}>
+                Submit
+              </ActivityButton>
             </form>
           </div>
           <div>
             <List>
-              {items.map((item) => (
-                <ListItem button key={item.id} onClick={() => selectDrawerItem(item.id)}>
+              {toolOptions.map((item) => (
+                <ListItem button key={item.name} onClick={() => selectDrawerItem(item.route)}>
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.name} />
                 </ListItem>
               ))}
+
+              <ListItem
+                button
+                key={'bugreporter'}
+                onClick={() => (window.location.href = 'https://forms.gle/r9xCnhTuYKj2mDUh6')}
+              >
+                <ListItemIcon>
+                  <BugReportRounded />
+                </ListItemIcon>
+                <ListItemText primary="Bug Reporting and Feature Requests" />
+              </ListItem>
             </List>
           </div>
           <div className={classes.version}>{pjson.version}</div>
@@ -212,6 +235,8 @@ const mapDispatchToProps = (dispatch) => {
     setWeeklyPPG: (weeklyPPG) => dispatch(setWeeklyPPG(weeklyPPG)),
     setWeeklyRank: (weeklyRank) => dispatch(setWeeklyRank(weeklyRank)),
     setPowerRankings: (powerRankings) => dispatch(setPowerRankings(powerRankings)),
+    setPlayerStats: (playerStats) => dispatch(setPlayerStats(playerStats)),
+    setPlayers: (players) => dispatch(setPlayers(players)),
   };
 };
 

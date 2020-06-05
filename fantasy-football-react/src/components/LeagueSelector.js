@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { times } from 'lodash';
 import { TextField, makeStyles, Button } from '@material-ui/core';
 import { connect } from 'react-redux';
 import {
@@ -11,8 +12,13 @@ import {
 } from '../actions/leagueData';
 import { useHistory, withRouter } from 'react-router-dom';
 import { compose } from 'redux';
-import { getAllESPNData, getESPNLeagueInfo } from '../api/espnFantasyFootballapi';
+import {
+  getAllESPNData,
+  getESPNLeagueInfo,
+  getESPNPlayerStats,
+} from '../api/espnFantasyFootballapi';
 import espnDataMunger from '../mungers/mungey';
+import espnPlayerMunger from '../mungers/playerMungey';
 import { useTracking, track } from 'react-tracking';
 import {
   setWeeklyRecord,
@@ -22,7 +28,9 @@ import {
   setWeeklyRank,
   setPowerRankings,
 } from '../actions/powerRankingData';
+import { setPlayerStats, setPlayers } from '../actions/playerData';
 import createPowerRankings from '../utils/createPowerRankings';
+import ActivityButton from './form/ActivityButton';
 
 const useStyles = makeStyles({
   card: {
@@ -49,12 +57,15 @@ const LeagueSelector = ({
   setWeeklyPPG,
   setWeeklyRank,
   setPowerRankings,
+  setPlayerStats,
+  setPlayers,
 }) => {
   const classes = useStyles();
   const history = useHistory();
   const tracking = useTracking();
   const [leagueIdState, setLeagueIdState] = useState('40974493');
   const [leagueYearState, setLeagueYearState] = useState('2020');
+  const [isLoadingData, setIsLoadingData] = useState(false);
 
   const changeLeagueId = (event) => {
     setLeagueIdState(event.target.value);
@@ -65,7 +76,9 @@ const LeagueSelector = ({
   };
 
   const getTeams = async () => {
+    setIsLoadingData(true);
     try {
+      // get basic roster/league data
       const response = await getAllESPNData({
         leagueID: parseInt(leagueIdState),
         leagueYear: parseInt(leagueYearState),
@@ -90,6 +103,20 @@ const LeagueSelector = ({
         leagueYear: leagueYearState,
       });
 
+      // get player stats
+      const playerStats = [];
+      for (const week of times(17)) {
+        const response = await getESPNPlayerStats({
+          leagueID: parseInt(leagueIdState),
+          leagueYear: parseInt(leagueYearState),
+          scoringPeriod: week + 1,
+        });
+        playerStats.push(response);
+      }
+      const playerMunge = espnPlayerMunger(playerStats);
+      setPlayerStats(playerMunge.seasonStats);
+      setPlayers(playerMunge.leaguePlayers);
+
       // create power rankings
       await createPowerRankings(
         munge.teams,
@@ -108,6 +135,8 @@ const LeagueSelector = ({
     } catch (e) {
       alert('No league/season data found');
       console.error('No league/season data found', e);
+    } finally {
+      setIsLoadingData(false);
     }
   };
 
@@ -117,7 +146,9 @@ const LeagueSelector = ({
         <form>
           <TextField value={leagueIdState} onChange={changeLeagueId} label="League ID" />
           <TextField value={leagueYearState} onChange={changeLeagueYear} label="Year" />
-          <Button onClick={getTeams}>Submit</Button>
+          <ActivityButton onClick={getTeams} isActive={isLoadingData}>
+            Submit
+          </ActivityButton>
         </form>
       </div>
     </div>
@@ -138,6 +169,8 @@ const mapDispatchToProps = (dispatch) => {
     setWeeklyPPG: (weeklyPPG) => dispatch(setWeeklyPPG(weeklyPPG)),
     setWeeklyRank: (weeklyRank) => dispatch(setWeeklyRank(weeklyRank)),
     setPowerRankings: (powerRankings) => dispatch(setPowerRankings(powerRankings)),
+    setPlayerStats: (playerStats) => dispatch(setPlayerStats(playerStats)),
+    setPlayers: (players) => dispatch(setPlayers(players)),
   };
 };
 
