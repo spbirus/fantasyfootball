@@ -149,7 +149,6 @@ const LeagueSelector = ({
           <ActivityButton onClick={getTeams} isActive={isLoadingData}>
             Submit
           </ActivityButton>
-          {/* <Button onClick={getTeams}>Submit</Button> */}
         </form>
       </div>
     </div>

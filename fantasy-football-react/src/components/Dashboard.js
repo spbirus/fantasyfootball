@@ -1,45 +1,50 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
+import { makeStyles, Grid } from '@material-ui/core';
+import { toolOptions } from '../constants/toolOptions';
+import ToolCard from './Cards/ToolCard';
 
-import AppBarReact from './AppBar';
-import DrawerReact from './Drawer';
-import HistoricalRoster from './HistoricalRoster';
-import { withRouter } from 'react-router-dom';
-import RosterRankings from './RosterRankings';
-import PowerRankings from './PowerRankings';
-import PlayerComparison from './PlayerComparison';
+const useStyles = makeStyles({
+  root: {
+    textAlign: 'center',
+    padding: '10px',
+  },
+  title: {
+    fontSize: '26px',
+    marginBottom: '10px',
+  },
+  text: {
+    fontSize: '18px',
+    marginBottom: '10px',
+  },
+  cards: {
+    display: 'inline-block',
+  },
+});
 
 const Dashboard = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [openPage, setOpenPage] = useState('depthRankings');
-
-  const toggleDrawer = (open) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-    setIsDrawerOpen(open);
-  };
-
-  const clickDrawerItem = (id) => {
-    setOpenPage(id);
-    setIsDrawerOpen(false);
-  };
+  const classes = useStyles();
 
   return (
-    <div>
-      <AppBarReact isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
-      <DrawerReact
-        isDrawerOpen={isDrawerOpen}
-        toggleDrawer={toggleDrawer}
-        selectDrawerItem={clickDrawerItem}
-      />
-      <div style={{ marginTop: '35px' }}>
-        {openPage === 'depthRankings' && <HistoricalRoster />}
-        {openPage === 'rosterRankings' && <RosterRankings />}
-        {openPage === 'powerRankings' && <PowerRankings />}
-        {openPage === 'playerComparison' && <PlayerComparison />}
+    <div className={classes.root}>
+      <div className={classes.title}>Welcome to Fantasy Sports Tools</div>
+      <div className={classes.text}>
+        Below are the tools available right now to see Fantasy Sports statistics, player
+        comparisons, and much much more!
+      </div>
+      <div className={classes.cards}>
+        <Grid container spacing={2}>
+          {toolOptions
+            .filter((tool) => tool.name.toLowerCase() !== 'dashboard')
+            .map((tool) => (
+              <Grid item xs key={`grid-${tool.name}`}>
+                <ToolCard tool={tool} />
+              </Grid>
+            ))}
+        </Grid>
       </div>
     </div>
   );
 };
 
-export default withRouter(Dashboard);
+export default Dashboard;

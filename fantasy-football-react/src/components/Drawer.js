@@ -2,12 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { times } from 'lodash';
 import Drawer from '@material-ui/core/Drawer';
 import { Typography, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import {
-  PeopleRounded,
-  ShowChartRounded,
-  MultilineChartRounded,
-  CompareArrowsRounded,
-} from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { TextField, makeStyles, Button } from '@material-ui/core';
 import {
@@ -19,7 +13,6 @@ import {
   setLeagueWeek,
   setLeagueMatchups,
 } from '../actions/leagueData';
-import { useHistory } from 'react-router-dom';
 import {
   getAllESPNData,
   getESPNLeagueInfo,
@@ -40,6 +33,7 @@ import { setPlayerStats, setPlayers } from '../actions/playerData';
 import espnPlayerMunger from '../mungers/playerMungey';
 import createPowerRankings from '../utils/createPowerRankings';
 import ActivityButton from './form/ActivityButton';
+import { toolOptions } from '../constants/toolOptions';
 
 const useStyles = makeStyles({
   drawer: {
@@ -63,29 +57,6 @@ const useStyles = makeStyles({
     left: '100px',
   },
 });
-
-const items = [
-  {
-    name: 'Depth Chart',
-    id: 'depthRankings',
-    icon: <PeopleRounded />,
-  },
-  {
-    name: 'Roster Rankings',
-    id: 'rosterRankings',
-    icon: <ShowChartRounded />,
-  },
-  {
-    name: 'Power Rankings',
-    id: 'powerRankings',
-    icon: <MultilineChartRounded />,
-  },
-  {
-    name: 'Player Comparison',
-    id: 'playerComparison',
-    icon: <CompareArrowsRounded />,
-  },
-];
 
 const DrawerReact = ({
   isDrawerOpen,
@@ -112,7 +83,6 @@ const DrawerReact = ({
   setPlayers,
 }) => {
   const classes = useStyles();
-  const history = useHistory();
   const tracking = useTracking();
   const [leagueIdState, setLeagueIdState] = useState(leagueId.toString());
   const [leagueYearState, setLeagueYearState] = useState(leagueYear.toString());
@@ -214,8 +184,8 @@ const DrawerReact = ({
           </div>
           <div>
             <List>
-              {items.map((item) => (
-                <ListItem button key={item.id} onClick={() => selectDrawerItem(item.id)}>
+              {toolOptions.map((item) => (
+                <ListItem button key={item.name} onClick={() => selectDrawerItem(item.route)}>
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.name} />
                 </ListItem>
