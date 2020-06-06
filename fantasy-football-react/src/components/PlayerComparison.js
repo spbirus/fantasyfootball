@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { connect } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Select, MenuItem } from '@material-ui/core';
 import PlayerStatChart from './PlayerStatChart';
+import times from 'lodash/times';
 
 const useStyles = makeStyles({
   root: {
@@ -22,6 +23,16 @@ const PlayerComparison = ({ players }) => {
   const classes = useStyles();
   const [playerOne, setPlayerOne] = useState({});
   const [playerTwo, setPlayerTwo] = useState({});
+  const [firstWeek, setFirstWeek] = useState(1);
+  const [secondWeek, setSecondWeek] = useState(17);
+
+  const handleFirstWeekChange = (event) => {
+    setFirstWeek(event.target.value);
+  };
+
+  const handleSecondWeekChange = (event) => {
+    setSecondWeek(event.target.value);
+  };
 
   return (
     <div className={classes.root}>
@@ -51,7 +62,22 @@ const PlayerComparison = ({ players }) => {
           className={classes.playerSelector}
         />
       </div>
-      <PlayerStatChart players={[playerOne, playerTwo]} />
+      <Select labelId="firstWeek" id="firstweek" value={firstWeek} onChange={handleFirstWeekChange}>
+        {times(17).map((item) => (
+          <MenuItem value={item + 1}>{item + 1}</MenuItem>
+        ))}
+      </Select>
+      <Select
+        labelId="secondWeek"
+        id="secondweek"
+        value={secondWeek}
+        onChange={handleSecondWeekChange}
+      >
+        {times(17).map((item) => (
+          <MenuItem value={item + 1}>{item + 1}</MenuItem>
+        ))}
+      </Select>
+      <PlayerStatChart players={[playerOne, playerTwo]} weekRange={[firstWeek, secondWeek]} />
     </div>
   );
 };
