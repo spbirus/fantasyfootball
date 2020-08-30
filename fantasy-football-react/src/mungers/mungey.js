@@ -86,7 +86,9 @@ const createRosterStatsHardData = (roster) => {
       if (totalRanking !== 0) {
         totalPlayers += 1;
       }
-      totalRankings += totalRanking;
+      if (totalRanking) {
+        totalRankings += totalRanking;
+      }
 
       // total each positional ranking
       const positionWeightedValue = determineWeightedPlayerValue(
