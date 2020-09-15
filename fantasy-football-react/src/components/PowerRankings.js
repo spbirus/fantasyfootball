@@ -1,5 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { makeStyles } from '@material-ui/core';
+import {
+  makeStyles,
+  TableContainer,
+  Table,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+  Paper,
+} from '@material-ui/core';
 import { connect } from 'react-redux';
 import createPowerRankings from '../utils/createPowerRankings';
 import { Line } from 'react-chartjs-2';
@@ -56,6 +65,8 @@ const PowerRankings = ({
   const classes = useStyles();
   const [rankings, setRankings] = useState(null);
 
+  console.log(rankings);
+
   const createPower = useCallback(async () => {
     let teamRankings = [];
     if (!powerRankings) {
@@ -102,33 +113,55 @@ const PowerRankings = ({
     <div>
       <div className={classes.lineChart}>
         {rankings ? (
-          <Line
-            data={rankings}
-            options={{
-              title: {
-                display: true,
-                text: 'Power Rankings',
-                fontSize: 20,
-              },
-              legend: {
-                display: true,
-                position: 'right',
-              },
-              scales: {
-                yAxes: [
-                  {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
-                    id: 'y-axis-2',
-                    ticks: {
-                      reverse: true,
+          <div>
+            <Line
+              data={rankings}
+              options={{
+                title: {
+                  display: true,
+                  text: 'Power Rankings',
+                  fontSize: 20,
+                },
+                legend: {
+                  display: true,
+                  position: 'right',
+                },
+                scales: {
+                  yAxes: [
+                    {
+                      type: 'linear',
+                      display: true,
+                      position: 'left',
+                      id: 'y-axis-2',
+                      ticks: {
+                        reverse: true,
+                      },
                     },
-                  },
-                ],
-              },
-            }}
-          />
+                  ],
+                },
+              }}
+            />
+            <TableContainer component={Paper}>
+              <Table className={classes.table} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Team</TableCell>
+                    <TableCell align="right">Ranking</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rankings.datasets.map((row) => (
+                    <TableRow key={row.label}>
+                      <TableCell component="th" scope="row">
+                        {row.label}
+                      </TableCell>
+                      <TableCell align="right">{row.data.slice(-1)[0]}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
         ) : (
           <PowerRankingSkeleton />
         )}
