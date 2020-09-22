@@ -22,6 +22,7 @@ import {
   setWeeklyRank,
   setPowerRankings,
 } from '../actions/powerRankingData';
+import { ArrowUpwardRounded, ArrowDownwardRounded } from '@material-ui/icons';
 
 const useStyles = makeStyles({
   lineChart: {
@@ -64,8 +65,6 @@ const PowerRankings = ({
 }) => {
   const classes = useStyles();
   const [rankings, setRankings] = useState(null);
-
-  console.log(rankings);
 
   const createPower = useCallback(async () => {
     let teamRankings = [];
@@ -147,6 +146,7 @@ const PowerRankings = ({
                   <TableRow>
                     <TableCell>Team</TableCell>
                     <TableCell align="right">Ranking</TableCell>
+                    <TableCell align="right">Change</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -156,6 +156,14 @@ const PowerRankings = ({
                         {row.label}
                       </TableCell>
                       <TableCell align="right">{row.data.slice(-1)[0]}</TableCell>
+                      <TableCell align="right">
+                        {row.data.slice(-2)[0] - row.data.slice(-1)[0] > 0 ? (
+                          <ArrowUpwardRounded />
+                        ) : row.data.slice(-2)[0] - row.data.slice(-1)[0] < 0 ? (
+                          <ArrowDownwardRounded />
+                        ) : null}
+                        {Math.abs(row.data.slice(-2)[0] - row.data.slice(-1)[0])}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
