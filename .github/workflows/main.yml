@@ -29,4 +29,6 @@ jobs:
 
       # deploy
       - name: deploy to firebase
-        run: firebase deploy -P fantasy-sports-tools
+        run: |
+          npm install firebase-tools -g
+          firebase deploy -P fantasy-sports-tools
