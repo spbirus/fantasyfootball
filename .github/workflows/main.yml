@@ -24,6 +24,7 @@ jobs:
       - name: build the code
         run: |
           cd fantasy-football-react
+          npm install
           npm run build
 
       # deploy
