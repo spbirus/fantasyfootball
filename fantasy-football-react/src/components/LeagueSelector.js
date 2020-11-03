@@ -60,11 +60,16 @@ const LeagueSelector = ({
   setPlayerStats,
   setPlayers,
 }) => {
+  // check the URL parameters
+  const url = new URL(window.location);
+  const yearParam = url.searchParams.get('year');
+  const leagueIdParam = url.searchParams.get('leagueId');
+
   const classes = useStyles();
   const history = useHistory();
   const tracking = useTracking();
-  const [leagueIdState, setLeagueIdState] = useState('40974493');
-  const [leagueYearState, setLeagueYearState] = useState('2020');
+  const [leagueIdState, setLeagueIdState] = useState(leagueIdParam || '40974493');
+  const [leagueYearState, setLeagueYearState] = useState(yearParam || '2020');
   const [isLoadingData, setIsLoadingData] = useState(false);
 
   const changeLeagueId = (event) => {
