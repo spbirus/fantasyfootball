@@ -30,5 +30,6 @@ jobs:
       # deploy
       - name: deploy to firebase
         run: |
+          cd fantasy-football-react
           npm install firebase-tools
           firebase deploy -P fantasy-sports-tools
