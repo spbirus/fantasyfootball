@@ -4,7 +4,7 @@ import { find } from 'lodash';
 const espnPlayerMunger = (data) => {
   const seasonStats = [];
   const leaguePlayers = [];
-  data.map((weekStats) => {
+  data.forEach((weekStats) => {
     seasonStats.push(createLeagueWideWeekStats(weekStats.players, leaguePlayers));
   });
 

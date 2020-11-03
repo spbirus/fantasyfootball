@@ -14,7 +14,6 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
 
 function createData(position, name, posRank, ovlRank) {
   return { position, name, posRank, ovlRank };
@@ -54,7 +53,7 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const { classes, order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -197,7 +196,7 @@ const Roster = ({ roster }) => {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('position');
   const [selected, setSelected] = useState([]);
-  const [dense, setDense] = useState(true);
+  const [dense] = useState(true);
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
@@ -247,10 +246,6 @@ const Roster = ({ roster }) => {
     }
 
     setSelected(newSelected);
-  };
-
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;

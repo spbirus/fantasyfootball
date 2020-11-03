@@ -102,11 +102,23 @@ const PowerRankings = ({
       labels,
       datasets,
     });
-  }, [leagueTeams, leagueMatchups, leagueId, leagueYear, powerRankings]);
+  }, [
+    leagueTeams,
+    leagueMatchups,
+    leagueId,
+    leagueYear,
+    powerRankings,
+    setPowerRankings,
+    setWeeklyCons,
+    setWeeklyOvlWins,
+    setWeeklyPPG,
+    setWeeklyRank,
+    setWeeklyRecord,
+  ]);
 
   useEffect(() => {
     createPower();
-  }, [leagueTeams, leagueMatchups, leagueId, leagueYear, powerRankings]);
+  }, [leagueTeams, leagueMatchups, leagueId, leagueYear, powerRankings, createPower]);
 
   return (
     <div>

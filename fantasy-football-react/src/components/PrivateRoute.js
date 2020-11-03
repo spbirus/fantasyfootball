@@ -1,14 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  Redirect,
-  useHistory,
-  useLocation,
-} from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 
 const PrivateRoute = ({ children, leagueId, ...rest }) => {
   return (

@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { makeStyles, Grid } from '@material-ui/core';
 import { toolOptions } from '../constants/toolOptions';
 import ToolCard from './Cards/ToolCard';

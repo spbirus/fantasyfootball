@@ -126,7 +126,7 @@ const createRosterStatsRelationalData = (teams) => {
   const teamSorted = teams.sort((a, b) => {
     return a.rosterStats.totalRankingNumber - b.rosterStats.totalRankingNumber;
   });
-  teamSorted.map((team, idx) => {
+  teamSorted.forEach((team, idx) => {
     team.rosterStats.totalRankingPosition = idx + 1;
   });
 
@@ -141,7 +141,7 @@ const createRosterStatsRelationalData = (teams) => {
       // have to use a value here due to the fact that people could have 0 of a certain position and
       // idx in the .map would account for those empty slots
       let value = 0;
-      teamSorted2.map((team) => {
+      teamSorted2.forEach((team) => {
         if (team.rosterStats.positionRankingNumber[index]) {
           value += 1;
           team.rosterStats.positionRankingPosition[index] = value;

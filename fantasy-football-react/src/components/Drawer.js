@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { times } from 'lodash';
 import Drawer from '@material-ui/core/Drawer';
 import { Typography, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { TextField, makeStyles, Button } from '@material-ui/core';
+import { TextField, makeStyles } from '@material-ui/core';
 import {
   setLeagueYear,
   setLeagueId,

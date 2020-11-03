@@ -11,7 +11,7 @@ import {
   Paper,
 } from '@material-ui/core';
 import find from 'lodash/find';
-import { Line, Radar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import { stats } from '../constants/statTypes';
 
 const useStyles = makeStyles({
@@ -77,7 +77,7 @@ const PlayerStatChart = ({ players, playerStats, weekRange }) => {
       labels: lineGraphLabels,
       datasets: lineGraphDatasets,
     });
-  }, [players]);
+  }, [players, playerStats]);
 
   useEffect(() => {
     const individualDatasets = [];
@@ -119,7 +119,7 @@ const PlayerStatChart = ({ players, playerStats, weekRange }) => {
       labels: labels,
       data: individualDatasets,
     });
-  }, [players, weekRange]);
+  }, [players, weekRange, playerStats]);
 
   return (
     <div className={classes.root}>

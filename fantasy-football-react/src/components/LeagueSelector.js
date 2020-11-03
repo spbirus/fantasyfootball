@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { times } from 'lodash';
-import { TextField, makeStyles, Button } from '@material-ui/core';
+import { TextField, makeStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import {
   setLeagueYear,

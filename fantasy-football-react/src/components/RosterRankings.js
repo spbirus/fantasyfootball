@@ -56,7 +56,7 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const { classes, order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -203,7 +203,7 @@ const RosterRankings = ({ leagueTeams }) => {
   const [order, setOrder] = useState('desc');
   const [orderBy, setOrderBy] = useState('ovlRank');
   const [selected, setSelected] = useState([]);
-  const [dense, setDense] = useState(true);
+  const [dense] = useState(true);
   const [rows, setRows] = useState([]);
   const [isShowData, setIsShowData] = useState(false);
 
@@ -269,10 +269,6 @@ const RosterRankings = ({ leagueTeams }) => {
     }
 
     setSelected(newSelected);
-  };
-
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
   };
 
   const handleShowDataChange = (event) => {
